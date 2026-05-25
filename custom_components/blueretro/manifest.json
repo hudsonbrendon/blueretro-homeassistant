@@ -1,0 +1,13 @@
+{
+  "domain": "blueretro",
+  "name": "BlueRetro",
+  "version": "0.1.0",
+  "codeowners": [],
+  "config_flow": true,
+  "dependencies": ["bluetooth_adapters"],
+  "documentation": "https://github.com/hudsonbrendon/blueretro-homeassistant",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "requirements": ["blueretro-ble==0.1.0"],
+  "bluetooth": [{ "local_name": "BlueRetro*" }]
+}
