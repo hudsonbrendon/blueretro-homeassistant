@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="icons/logo.png" alt="BlueRetro" width="360">
+  <img src="custom_components/blueretro/brand/logo.png" alt="BlueRetro" width="360">
 </p>
 
 # BlueRetro for Home Assistant
