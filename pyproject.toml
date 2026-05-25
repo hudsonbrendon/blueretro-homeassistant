@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "blueretro-ble"
+version = "0.1.0"
+description = "BLE library for the BlueRetro retro-console Bluetooth adapter"
+requires-python = ">=3.12"
+dependencies = [
+    "bleak>=0.22.0",
+    "bleak-retry-connector>=3.5.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-homeassistant-custom-component>=0.13",
+]
+
+[tool.setuptools]
+packages = ["blueretro_ble"]
+
+[tool.setuptools.package-data]
+blueretro_ble = ["gameid.db"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
