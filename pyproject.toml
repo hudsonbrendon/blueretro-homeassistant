@@ -2,18 +2,23 @@
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
+# This repo is a Home Assistant HACS custom integration (custom_components/blueretro),
+# not a Python package. The BLE library lives in its own repo and on PyPI as
+# `blueretro-ble` (https://github.com/hudsonbrendon/blueretro-ble); the integration
+# depends on it via manifest.json `requirements`. This pyproject exists only to
+# configure pytest and the dev/test toolchain.
 [project]
-name = "blueretro-ble"
+name = "blueretro-homeassistant"
 version = "0.1.0"
-description = "BLE library for the BlueRetro retro-console Bluetooth adapter"
+description = "Home Assistant integration for the BlueRetro retro-console Bluetooth adapter"
+readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.12"
-dependencies = [
-    "bleak>=0.22.0",
-    "bleak-retry-connector>=3.5.0",
-]
+authors = [{ name = "Hudson Brendon", email = "contato.hudsonbrendon@gmail.com" }]
 
 [project.optional-dependencies]
 test = [
+    "blueretro-ble==0.1.0",
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "pytest-homeassistant-custom-component>=0.13",
@@ -23,11 +28,9 @@ test = [
     "dbus-fast>=2.0",
 ]
 
+# No Python package is shipped from this repo.
 [tool.setuptools]
-packages = ["blueretro_ble"]
-
-[tool.setuptools.package-data]
-blueretro_ble = ["gameid.db"]
+packages = []
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
