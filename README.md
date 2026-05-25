@@ -4,6 +4,12 @@
 
 # BlueRetro for Home Assistant
 
+[![Tests](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/test.yml/badge.svg)](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/test.yml)
+[![Validate](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/validate.yml/badge.svg)](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/validate.yml)
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
+[![Release](https://img.shields.io/github/v/release/hudsonbrendon/blueretro-homeassistant)](https://github.com/hudsonbrendon/blueretro-homeassistant/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Autodiscovers a [BlueRetro](https://github.com/darthcloud/BlueRetro) adapter over Bluetooth
 and exposes read-only sensors plus reboot/deep-sleep controls.
 
