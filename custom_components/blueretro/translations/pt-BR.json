@@ -1,0 +1,35 @@
+{
+  "config": {
+    "flow_title": "{name}",
+    "step": {
+      "bluetooth_confirm": {
+        "description": "Deseja configurar {name}?"
+      },
+      "user": {
+        "data": { "address": "Dispositivo" }
+      }
+    },
+    "abort": {
+      "not_supported": "Este dispositivo não é um adaptador BlueRetro.",
+      "no_devices_found": "Nenhum dispositivo BlueRetro encontrado.",
+      "already_configured": "O dispositivo já está configurado."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "firmware": { "name": "Firmware" },
+      "game_id": { "name": "ID do jogo" },
+      "game": { "name": "Jogo" },
+      "config_source": { "name": "Origem da configuração" },
+      "abi_version": { "name": "Versão da ABI" },
+      "bd_address": { "name": "Endereço BD" }
+    },
+    "binary_sensor": {
+      "config_available": { "name": "Configuração disponível" }
+    },
+    "button": {
+      "reboot": { "name": "Reiniciar" },
+      "deep_sleep": { "name": "Sono profundo" }
+    }
+  }
+}

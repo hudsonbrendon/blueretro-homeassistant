@@ -1,7 +1,7 @@
 {
   "domain": "blueretro",
   "name": "BlueRetro",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "codeowners": ["@hudsonbrendon"],
   "config_flow": true,
   "dependencies": ["bluetooth_adapters"],
