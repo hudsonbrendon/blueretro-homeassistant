@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.5] - 2026-05-25
+
+### Added
+- Global-config sensors (read-only): System, Multitap, Pairing mode, Memory card
+  bank, and Firmware name — backed by `blueretro-ble` 0.1.2. Translated to
+  en/pt-BR/pt/es.
+
+### Changed
+- Require `blueretro-ble==0.1.2`.
+
 ## [0.1.4] - 2026-05-25
 
 ### Fixed
