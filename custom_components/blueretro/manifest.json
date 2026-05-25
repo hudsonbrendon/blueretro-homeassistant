@@ -7,7 +7,8 @@
   "dependencies": ["bluetooth_adapters"],
   "documentation": "https://github.com/hudsonbrendon/blueretro-homeassistant",
   "integration_type": "device",
+  "issue_tracker": "https://github.com/hudsonbrendon/blueretro-homeassistant/issues",
   "iot_class": "local_polling",
   "requirements": ["blueretro-ble==0.1.0"],
-  "version": "0.1.3"
+  "version": "0.1.4"
 }
