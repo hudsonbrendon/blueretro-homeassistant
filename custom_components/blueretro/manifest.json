@@ -1,8 +1,8 @@
 {
   "domain": "blueretro",
   "name": "BlueRetro",
-  "version": "0.1.0",
-  "codeowners": [],
+  "version": "0.1.1",
+  "codeowners": ["@hudsonbrendon"],
   "config_flow": true,
   "dependencies": ["bluetooth_adapters"],
   "documentation": "https://github.com/hudsonbrendon/blueretro-homeassistant",
