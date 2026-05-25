@@ -6,11 +6,27 @@ build-backend = "setuptools.build_meta"
 name = "blueretro-ble"
 version = "0.1.0"
 description = "BLE library for the BlueRetro retro-console Bluetooth adapter"
+readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.12"
+authors = [{ name = "Hudson Brendon", email = "contato.hudsonbrendon@gmail.com" }]
+keywords = ["bluetooth", "ble", "blueretro", "home-assistant", "retro-gaming"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Home Automation",
+]
 dependencies = [
     "bleak>=0.22.0",
     "bleak-retry-connector>=3.5.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/hudsonbrendon/blueretro-homeassistant"
+Repository = "https://github.com/hudsonbrendon/blueretro-homeassistant"
+Issues = "https://github.com/hudsonbrendon/blueretro-homeassistant/issues"
 
 [project.optional-dependencies]
 test = [
