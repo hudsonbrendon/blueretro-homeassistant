@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-05-25
+
+### Fixed
+- Add `issue_tracker` to the manifest so HACS validation passes.
+
+## [0.1.3] - 2026-05-25
+
 ### Added
 - GitHub Actions: `pytest` on every push/PR, plus `hassfest` and HACS validation.
 - Contributing guide, issue/PR templates, and README badges.
@@ -33,7 +40,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   sensor / binary_sensor / button platforms for the BlueRetro adapter, backed by
   the `blueretro-ble` library.
 
-[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.4
+[0.1.3]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.3
 [0.1.2]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.2
 [0.1.1]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.1
 [0.1.0]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.0
