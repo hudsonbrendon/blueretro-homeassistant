@@ -26,6 +26,10 @@
     },
     "binary_sensor": {
       "config_available": { "name": "Config available" }
+    },
+    "button": {
+      "reboot": { "name": "Reboot" },
+      "deep_sleep": { "name": "Deep sleep" }
     }
   }
 }
