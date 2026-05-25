@@ -23,6 +23,9 @@
       "config_source": { "name": "Config source" },
       "abi_version": { "name": "ABI version" },
       "bd_address": { "name": "BD address" }
+    },
+    "binary_sensor": {
+      "config_available": { "name": "Config available" }
     }
   }
 }
