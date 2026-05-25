@@ -13,7 +13,7 @@ be active *before* ``enable_bluetooth`` sets bluetooth up, hence the explicit
 fixture ordering.
 """
 
-from unittest.mock import PropertyMock, patch
+from unittest.mock import AsyncMock, PropertyMock, patch
 
 import pytest
 
@@ -25,6 +25,23 @@ def patch_adapter_history():
         "bluetooth_adapters.systems.linux.LinuxAdapters.history",
         new_callable=PropertyMock,
         return_value={},
+    ):
+        yield
+
+
+@pytest.fixture(autouse=True)
+def mock_usb_setup():
+    """Skip starting the usb pyudev monitor.
+
+    ``bluetooth`` depends on ``usb``, whose pyudev monitor cannot start inside CI
+    containers (no udev) and raises in ``_get_monitor_observer``. On macOS the
+    monitor is a no-op so tests pass locally, but on Linux CI it fails and drags
+    down the bluetooth -> bluetooth_adapters -> blueretro chain. Stub only the
+    monitor start so usb setup still registers its data (which bluetooth reads).
+    """
+    with patch(
+        "homeassistant.components.usb.USBDiscovery._async_start_monitor",
+        AsyncMock(return_value=None),
     ):
         yield
 
@@ -43,6 +60,6 @@ def expected_lingering_timers() -> bool:
 
 
 @pytest.fixture(autouse=True)
-def auto_enable_bluetooth(patch_adapter_history, enable_bluetooth):
+def auto_enable_bluetooth(patch_adapter_history, mock_usb_setup, enable_bluetooth):
     """Mock and set up the bluetooth stack for every integration test."""
     yield
