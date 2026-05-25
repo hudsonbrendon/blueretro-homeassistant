@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a problem with the BlueRetro integration
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Home Assistant, BlueRetro integration, and adapter firmware.
+      placeholder: "HA 2026.3, integration 0.1.3, fw v24.04 hw1 playstation"
+    validations:
+      required: true
+  - type: dropdown
+    id: idle
+    attributes:
+      label: Was the adapter idle (no controller connected)?
+      description: The config BLE is only reachable while idle.
+      options:
+        - "Yes, idle"
+        - "No, a controller was connected"
+        - "Not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      render: text
