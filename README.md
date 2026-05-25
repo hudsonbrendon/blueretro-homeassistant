@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="custom_components/blueretro/brand/logo.png" alt="BlueRetro" width="360">
+</p>
+
 # BlueRetro for Home Assistant
 
 Autodiscovers a [BlueRetro](https://github.com/darthcloud/BlueRetro) adapter over Bluetooth
