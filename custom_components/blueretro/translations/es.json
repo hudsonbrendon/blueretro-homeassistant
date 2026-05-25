@@ -22,7 +22,12 @@
       "game": { "name": "Juego" },
       "config_source": { "name": "Origen de configuración" },
       "abi_version": { "name": "Versión de ABI" },
-      "bd_address": { "name": "Dirección BD" }
+      "bd_address": { "name": "Dirección BD" },
+      "system": { "name": "Sistema" },
+      "multitap": { "name": "Multitap" },
+      "inquiry_mode": { "name": "Modo de emparejamiento" },
+      "memory_card_bank": { "name": "Banco de tarjeta de memoria" },
+      "firmware_name": { "name": "Nombre del firmware" }
     },
     "binary_sensor": {
       "config_available": { "name": "Configuración disponible" }

@@ -28,11 +28,16 @@ async def test_sensors_report_values(hass):
     state = BlueRetroState(
         available=True,
         fw_version="v1.8.1",
+        fw_name="playstation hw1",
         abi_version=2,
         bdaddr="66:55:44:33:22:11",
         game_id="GALE01",
         game_name="Super Smash Bros. Melee",
         cfg_src=1,
+        system="PS2",
+        multitap="None",
+        inquiry_mode="Manual",
+        memory_card_bank=1,
     )
     await _setup(hass, state)
 
@@ -47,6 +52,14 @@ async def test_sensors_report_values(hass):
     assert (
         hass.states.get("sensor.blueretro_bd_address").state
         == "66:55:44:33:22:11"
+    )
+    assert hass.states.get("sensor.blueretro_system").state == "PS2"
+    assert hass.states.get("sensor.blueretro_multitap").state == "None"
+    assert hass.states.get("sensor.blueretro_pairing_mode").state == "Manual"
+    assert hass.states.get("sensor.blueretro_memory_card_bank").state == "1"
+    assert (
+        hass.states.get("sensor.blueretro_firmware_name").state
+        == "playstation hw1"
     )
 
 

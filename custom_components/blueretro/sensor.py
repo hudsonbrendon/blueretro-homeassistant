@@ -59,6 +59,35 @@ SENSORS: tuple[BlueRetroSensorDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda s: s.bdaddr,
     ),
+    BlueRetroSensorDescription(
+        key="system",
+        translation_key="system",
+        value_fn=lambda s: s.system,
+    ),
+    BlueRetroSensorDescription(
+        key="multitap",
+        translation_key="multitap",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda s: s.multitap,
+    ),
+    BlueRetroSensorDescription(
+        key="inquiry_mode",
+        translation_key="inquiry_mode",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda s: s.inquiry_mode,
+    ),
+    BlueRetroSensorDescription(
+        key="memory_card_bank",
+        translation_key="memory_card_bank",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda s: s.memory_card_bank,
+    ),
+    BlueRetroSensorDescription(
+        key="firmware_name",
+        translation_key="firmware_name",
+        entity_category=EntityCategory.DIAGNOSTIC,
+        value_fn=lambda s: s.fw_name,
+    ),
 )
 
 
