@@ -70,3 +70,20 @@ class BlueRetroDevice:
         """Write a command byte to CHAR_CMD then read the response."""
         await client.write_gatt_char(const.CHAR_CMD, bytes([command]), response=True)
         return await client.read_gatt_char(const.CHAR_CMD)
+
+    async def async_reboot(self, ble_device: BLEDevice) -> None:
+        """Reboot the adapter."""
+        await self._send_command(ble_device, const.CMD_SYS_RESET)
+
+    async def async_deep_sleep(self, ble_device: BLEDevice) -> None:
+        """Put the adapter into deep sleep."""
+        await self._send_command(ble_device, const.CMD_SYS_DEEP_SLEEP)
+
+    async def _send_command(self, ble_device: BLEDevice, command: int) -> None:
+        client = await self._connect(ble_device)
+        try:
+            await client.write_gatt_char(
+                const.CHAR_CMD, bytes([command]), response=True
+            )
+        finally:
+            await client.disconnect()
