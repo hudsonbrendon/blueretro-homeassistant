@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-05-26
+
+### Added
+- Dreamcast-relevant read-only sensors: **Controller mode** (GamePad/Keyboard/…)
+  and **Accessory** (None/Memory/Rumble/Both — `Memory`/`Both` means a VMU is
+  emulated), from the adapter's output config. Translated en/pt-BR/pt/es.
+
+### Changed
+- Require `blueretro-ble==0.3.0`.
+
 ## [0.1.6] - 2026-05-26
 
 ### Changed
