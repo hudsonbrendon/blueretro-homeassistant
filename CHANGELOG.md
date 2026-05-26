@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.8] - 2026-05-26
+
+### Added
+- **Backup VMU** button: downloads the emulated Dreamcast VMU (128 KiB) and saves
+  it to `blueretro_vmu_<address>_<timestamp>.bin` in the config dir, then posts a
+  notification with the path. Translated en/pt-BR/pt/es.
+
 ## [0.1.7] - 2026-05-26
 
 ### Added

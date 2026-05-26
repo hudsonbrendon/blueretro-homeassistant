@@ -36,7 +36,8 @@
     },
     "button": {
       "reboot": { "name": "Reboot" },
-      "deep_sleep": { "name": "Deep sleep" }
+      "deep_sleep": { "name": "Deep sleep" },
+      "backup_vmu": { "name": "Backup VMU" }
     }
   }
 }

@@ -36,7 +36,8 @@
     },
     "button": {
       "reboot": { "name": "Reiniciar" },
-      "deep_sleep": { "name": "Suspensión profunda" }
+      "deep_sleep": { "name": "Suspensión profunda" },
+      "backup_vmu": { "name": "Copia de seguridad del VMU" }
     }
   }
 }
