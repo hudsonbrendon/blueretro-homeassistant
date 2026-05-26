@@ -27,7 +27,9 @@
       "multitap": { "name": "Multitap" },
       "inquiry_mode": { "name": "Pairing mode" },
       "memory_card_bank": { "name": "Memory card bank" },
-      "firmware_name": { "name": "Firmware name" }
+      "firmware_name": { "name": "Firmware name" },
+      "controller_mode": { "name": "Controller mode" },
+      "accessory": { "name": "Accessory" }
     },
     "binary_sensor": {
       "config_available": { "name": "Config available" }
