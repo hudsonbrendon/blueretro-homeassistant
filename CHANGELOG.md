@@ -6,6 +6,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-05-26
+
+### Changed
+- Require `blueretro-ble==0.2.0` (the library moved to a `src/` layout with a
+  `blueretro` CLI; the public API the integration uses is unchanged).
+
 ## [0.1.5] - 2026-05-25
 
 ### Added
