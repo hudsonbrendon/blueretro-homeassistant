@@ -27,17 +27,18 @@
       "multitap": { "name": "Multitap" },
       "inquiry_mode": { "name": "Modo de emparejamiento" },
       "memory_card_bank": { "name": "Banco de tarjeta de memoria" },
-      "firmware_name": { "name": "Nombre del firmware" },
-      "controller_mode": { "name": "Modo del mando" },
-      "accessory": { "name": "Accesorio" }
+      "firmware_name": { "name": "Nombre del firmware" }
     },
     "binary_sensor": {
       "config_available": { "name": "Configuración disponible" }
     },
     "button": {
       "reboot": { "name": "Reiniciar" },
-      "deep_sleep": { "name": "Suspensión profunda" },
-      "backup_vmu": { "name": "Copia de seguridad del VMU" }
+      "deep_sleep": { "name": "Suspensión profunda" }
+    },
+    "select": {
+      "controller_mode": { "name": "Modo del mando" },
+      "accessory": { "name": "Accesorio" }
     }
   }
 }

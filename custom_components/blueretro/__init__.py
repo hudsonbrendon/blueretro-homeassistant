@@ -8,7 +8,12 @@ from homeassistant.core import HomeAssistant
 
 from .coordinator import BlueRetroCoordinator
 
-PLATFORMS = [Platform.SENSOR, Platform.BINARY_SENSOR, Platform.BUTTON]
+PLATFORMS = [
+    Platform.SENSOR,
+    Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+    Platform.SELECT,
+]
 
 type BlueRetroConfigEntry = ConfigEntry[BlueRetroCoordinator]
 

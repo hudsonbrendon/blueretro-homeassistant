@@ -38,8 +38,6 @@ async def test_sensors_report_values(hass):
         multitap="None",
         inquiry_mode="Manual",
         memory_card_bank=1,
-        controller_mode="GamePad",
-        accessory="Memory",
     )
     await _setup(hass, state)
 
@@ -63,8 +61,6 @@ async def test_sensors_report_values(hass):
         hass.states.get("sensor.blueretro_firmware_name").state
         == "playstation hw1"
     )
-    assert hass.states.get("sensor.blueretro_controller_mode").state == "GamePad"
-    assert hass.states.get("sensor.blueretro_accessory").state == "Memory"
 
 
 async def test_sensors_unavailable_when_offline(hass):

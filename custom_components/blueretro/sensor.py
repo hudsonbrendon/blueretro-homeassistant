@@ -88,18 +88,6 @@ SENSORS: tuple[BlueRetroSensorDescription, ...] = (
         entity_category=EntityCategory.DIAGNOSTIC,
         value_fn=lambda s: s.fw_name,
     ),
-    BlueRetroSensorDescription(
-        key="controller_mode",
-        translation_key="controller_mode",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda s: s.controller_mode,
-    ),
-    BlueRetroSensorDescription(
-        key="accessory",
-        translation_key="accessory",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda s: s.accessory,
-    ),
 )
 
 

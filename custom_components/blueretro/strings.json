@@ -27,17 +27,18 @@
       "multitap": { "name": "Multitap" },
       "inquiry_mode": { "name": "Pairing mode" },
       "memory_card_bank": { "name": "Memory card bank" },
-      "firmware_name": { "name": "Firmware name" },
-      "controller_mode": { "name": "Controller mode" },
-      "accessory": { "name": "Accessory" }
+      "firmware_name": { "name": "Firmware name" }
     },
     "binary_sensor": {
       "config_available": { "name": "Config available" }
     },
     "button": {
       "reboot": { "name": "Reboot" },
-      "deep_sleep": { "name": "Deep sleep" },
-      "backup_vmu": { "name": "Backup VMU" }
+      "deep_sleep": { "name": "Deep sleep" }
+    },
+    "select": {
+      "controller_mode": { "name": "Controller mode" },
+      "accessory": { "name": "Accessory" }
     }
   }
 }

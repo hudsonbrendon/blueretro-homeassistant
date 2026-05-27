@@ -1,5 +1,3 @@
-import glob
-import os
 from unittest.mock import AsyncMock, patch
 
 from homeassistant.exceptions import HomeAssistantError
@@ -78,27 +76,3 @@ async def test_button_raises_when_device_unreachable(hass):
                 {"entity_id": "button.blueretro_reboot"},
                 blocking=True,
             )
-
-
-async def test_backup_vmu_button_writes_file(hass):
-    ble_device = AsyncMock()
-    vmu = bytes(128 * 1024)
-    with (
-        patch(BLE_ADDR, return_value=ble_device),
-        patch(UPDATE, AsyncMock(return_value=BlueRetroState(available=True))),
-    ):
-        await _setup(hass)
-        with patch(
-            "custom_components.blueretro.coordinator.BlueRetroDevice.async_read_vmu",
-            AsyncMock(return_value=vmu),
-        ) as mock_read:
-            await hass.services.async_call(
-                "button",
-                "press",
-                {"entity_id": "button.blueretro_backup_vmu"},
-                blocking=True,
-            )
-    mock_read.assert_awaited_once_with(ble_device)
-    files = glob.glob(hass.config.path("www", "blueretro_vmu_*.bin"))
-    assert files, "expected a VMU .bin to be written under www/"
-    assert os.path.getsize(files[0]) == len(vmu)

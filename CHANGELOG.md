@@ -6,6 +6,19 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-05-26
+
+### Added
+- **Controller mode** and **Accessory** selects (per-output config, port 1) —
+  change the emulated device (GamePad/Keyboard/Mouse) and accessory
+  (None/Memory/Rumble/Both) via 2-byte writes. Requires `blueretro-ble==0.4.0`.
+
+### Removed
+- The **Backup VMU** button — unreliable over the HA BlueZ stack (the connection
+  negotiates MTU 23, so the 128 KiB transfer fails partway). Use the official web
+  config (Chrome, MTU 517) for VMU backup/restore.
+- The read-only Controller mode / Accessory **sensors**, superseded by the selects.
+
 ## [0.1.9] - 2026-05-26
 
 ### Changed
