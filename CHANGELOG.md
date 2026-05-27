@@ -6,6 +6,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-05-26
+
+### Changed
+- **Backup VMU** button now always reports its outcome via a notification: on
+  success it saves under `config/www` and links the `/local/...` download; on
+  failure it shows the error (no more silent failures). Requires
+  `blueretro-ble==0.3.1`.
+
 ## [0.1.8] - 2026-05-26
 
 ### Added

@@ -99,6 +99,6 @@ async def test_backup_vmu_button_writes_file(hass):
                 blocking=True,
             )
     mock_read.assert_awaited_once_with(ble_device)
-    files = glob.glob(hass.config.path("blueretro_vmu_*.bin"))
-    assert files, "expected a VMU .bin to be written"
+    files = glob.glob(hass.config.path("www", "blueretro_vmu_*.bin"))
+    assert files, "expected a VMU .bin to be written under www/"
     assert os.path.getsize(files[0]) == len(vmu)

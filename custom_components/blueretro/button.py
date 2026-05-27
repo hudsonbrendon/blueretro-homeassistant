@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import os
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from pathlib import Path
 
 from homeassistant.components import persistent_notification
 from homeassistant.components.button import (
@@ -108,14 +108,34 @@ class BlueRetroBackupVmuButton(BlueRetroEntity, ButtonEntity):
             raise HomeAssistantError(
                 "BlueRetro is busy or out of range (only reachable when idle)"
             )
-        data = await self.coordinator.device.async_read_vmu(ble_device)
         address = self.coordinator.address.replace(":", "")
+        notification_id = f"blueretro_vmu_backup_{address}"
+        try:
+            data = await self.coordinator.device.async_read_vmu(ble_device)
+        except Exception as err:  # noqa: BLE001 - surface any failure to the user
+            persistent_notification.async_create(
+                self.hass,
+                f"VMU backup failed: {err}",
+                title="BlueRetro VMU backup",
+                notification_id=notification_id,
+            )
+            raise HomeAssistantError(f"VMU backup failed: {err}") from err
+
         timestamp = dt_util.now().strftime("%Y%m%d_%H%M%S")
-        path = self.hass.config.path(f"blueretro_vmu_{address}_{timestamp}.bin")
-        await self.hass.async_add_executor_job(Path(path).write_bytes, data)
+        filename = f"blueretro_vmu_{address}_{timestamp}.bin"
+        www = self.hass.config.path("www")
+        path = os.path.join(www, filename)
+
+        def _write() -> None:
+            os.makedirs(www, exist_ok=True)
+            with open(path, "wb") as file:
+                file.write(data)
+
+        await self.hass.async_add_executor_job(_write)
+        # Files under <config>/www are served at /local, so this link downloads it.
         persistent_notification.async_create(
             self.hass,
-            f"Saved {len(data)} bytes to `{path}`.",
+            f"Saved {len(data)} bytes. Download: [/local/{filename}](/local/{filename})",
             title="BlueRetro VMU backup",
-            notification_id=f"blueretro_vmu_backup_{address}",
+            notification_id=notification_id,
         )
