@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="custom_components/blueretro/brand/logo.png" alt="BlueRetro" width="360">
+  <img src="custom_components/blueretro/brand/logo.png" alt="BlueRetro" width="420">
 </p>
 
 # BlueRetro for Home Assistant
@@ -10,23 +10,98 @@
 [![Release](https://img.shields.io/github/v/release/hudsonbrendon/blueretro-homeassistant)](https://github.com/hudsonbrendon/blueretro-homeassistant/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-Autodiscovers a [BlueRetro](https://github.com/darthcloud/BlueRetro) adapter over Bluetooth
-and exposes read-only sensors plus reboot/deep-sleep controls.
+Auto-discovers a **[BlueRetro](https://github.com/darthcloud/BlueRetro)**
+retro-console Bluetooth adapter over Bluetooth and exposes its status, current
+game, and configuration in Home Assistant — read-only sensors, mode/accessory
+selects, and reboot/deep-sleep buttons.
 
-## Limits
+The Bluetooth protocol and device control live in a separate Python library,
+[**`blueretro-ble`**](https://github.com/hudsonbrendon/blueretro-ble)
+([PyPI](https://pypi.org/project/blueretro-ble/)), which this integration pulls in
+automatically via `manifest.json` `requirements`.
 
-- Works only while the adapter is **idle** (no controller connected). During gameplay the
-  config BLE is unavailable, so entities show `unavailable` — by design, to protect gameplay.
-- No battery or live controller input (the hardware does not expose them).
+## Features
 
-## Install
+- 🔍 **Automatic discovery** — power the BlueRetro near Home Assistant with no
+  controller connected and it shows up as a discovered device (no MAC address or
+  YAML required).
+- 📊 **Sensors** — Firmware, Game ID, Game, Config source, plus diagnostics: ABI
+  version, BD address, pairing mode, multitap, memory-card bank and firmware name.
+- 🟢 **Config available** — a connectivity `binary_sensor`, on while the adapter is
+  idle and reachable.
+- 🎛️ **Selects** — Controller mode (GamePad / GamePadAlt / Keyboard / Mouse) and
+  Accessory (None / Memory / Rumble / Both) for the first output.
+- 🔁 **Buttons** — Reboot and Deep sleep.
+- 🌍 **Translations** — English, Portuguese (BR and PT) and Spanish.
+- 📡 **Works through ESPHome Bluetooth proxies** — uses Home Assistant's shared
+  Bluetooth stack, so the adapter only needs to be near a proxy, not the HA host.
 
-1. Add this repo as a HACS custom repository (category: Integration).
-2. Install **BlueRetro** and restart Home Assistant.
-3. Power the BlueRetro with no controller connected; Home Assistant discovers it automatically.
+## Requirements
+
+- Home Assistant **2024.12** or newer.
+- A Bluetooth adapter on the Home Assistant host **or** an
+  [ESPHome Bluetooth proxy](https://esphome.io/components/bluetooth_proxy.html)
+  within range of the adapter.
+- A BlueRetro adapter, **idle** (no controller connected — the configuration
+  interface is only reachable then).
+
+## Installation
+
+### HACS (recommended)
+
+1. In Home Assistant, open **HACS → ⋮ (top right) → Custom repositories**.
+2. Add the repository URL `https://github.com/hudsonbrendon/blueretro-homeassistant`
+   and choose the **Integration** category.
+3. Search for **BlueRetro** in HACS, install it, and **restart Home Assistant**.
+
+### Manual
+
+1. Copy `custom_components/blueretro/` into your Home Assistant
+   `config/custom_components/` directory.
+2. Restart Home Assistant.
+
+## Setup
+
+1. Power on the BlueRetro **with no controller connected**, within range of Home
+   Assistant (or a Bluetooth proxy).
+2. Home Assistant discovers it automatically — go to **Settings → Devices &
+   Services** and confirm the discovered **BlueRetro** device.
+3. If it isn't auto-discovered, add it manually: **Settings → Devices & Services →
+   Add Integration → BlueRetro**, then pick the adapter from the list.
 
 ## Entities
 
-- Sensors: Firmware, Game ID, Game, Config source, ABI version (diag), BD address (diag).
-- Binary sensor: Config available (connectivity).
-- Buttons: Reboot, Deep sleep.
+| Type | Entity | Notes |
+|---|---|---|
+| `sensor` | Firmware, Game ID, Game, Config source | primary |
+| `sensor` | ABI version, BD address, Pairing mode, Multitap, Memory card bank, Firmware name | diagnostic |
+| `binary_sensor` | Config available | connectivity (on while idle/reachable) |
+| `select` | Controller mode, Accessory | writes the output config |
+| `button` | Reboot, Deep sleep | |
+
+## How it works
+
+This repository ships **only** the Home Assistant integration. All Bluetooth
+work — discovery, connecting, decoding the config, and sending commands — lives
+in the [`blueretro-ble`](https://github.com/hudsonbrendon/blueretro-ble) Python
+library and is pulled in as a dependency.
+
+## Limitations
+
+- The adapter's configuration is only reachable while **idle** (no controller
+  connected). During gameplay the entities show `unavailable` — by design, to
+  avoid interfering with play.
+- Bluetooth LE allows **one client at a time** — don't run the BlueRetro web
+  config while Home Assistant is connected.
+- **VMU (Dreamcast memory card) backup/restore is not provided** here: it needs a
+  large BLE MTU and is unreliable over Home Assistant's Bluetooth stack. Use the
+  official web config (in Chrome) for VMU backup/restore.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Protocol/decoding changes belong in the
+[`blueretro-ble`](https://github.com/hudsonbrendon/blueretro-ble) library, not here.
+
+## License
+
+[MIT](LICENSE) © Hudson Brendon

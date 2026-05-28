@@ -6,6 +6,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-05-28
+
+### Changed
+- Use `parse_firmware` from `blueretro-ble` 0.5.0 (all BlueRetro logic now lives
+  in the library); the integration is pure Home Assistant glue.
+- README rewritten to the standard Home Assistant integration layout.
+
 ## [0.2.0] - 2026-05-26
 
 ### Added
@@ -94,7 +101,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   sensor / binary_sensor / button platforms for the BlueRetro adapter, backed by
   the `blueretro-ble` library.
 
-[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.2.1
+[0.2.0]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.2.0
 [0.1.4]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.4
 [0.1.3]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.3
 [0.1.2]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.2
