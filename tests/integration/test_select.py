@@ -65,3 +65,25 @@ async def test_select_raises_when_device_unreachable(hass):
                 {"entity_id": "select.blueretro_controller_mode", "option": "Mouse"},
                 blocking=True,
             )
+
+
+async def test_select_memory_card_bank_writes_global_config(hass):
+    ble_device = AsyncMock()
+    state = BlueRetroState(available=True, system="N64", memory_card_bank=1)
+    with (
+        patch(BLE_ADDR, return_value=ble_device),
+        patch(UPDATE, AsyncMock(return_value=state)),
+    ):
+        await _setup(hass, ble_device, state)
+        assert hass.states.get("select.blueretro_memory_card_bank").state == "1"
+        with patch(
+            "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_global_config",
+            AsyncMock(),
+        ) as mock_set:
+            await hass.services.async_call(
+                "select",
+                "select_option",
+                {"entity_id": "select.blueretro_memory_card_bank", "option": "3"},
+                blocking=True,
+            )
+    mock_set.assert_awaited_once_with(ble_device, memory_card_bank=3)
