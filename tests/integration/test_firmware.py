@@ -4,7 +4,7 @@ from homeassistant.helpers import device_registry as dr
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from blueretro_ble import BlueRetroState
-from custom_components.blueretro._firmware import parse_firmware
+from blueretro_ble import parse_firmware
 from custom_components.blueretro.const import DOMAIN
 
 
