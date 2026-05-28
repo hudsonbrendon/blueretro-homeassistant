@@ -44,6 +44,18 @@ SELECTS: tuple[BlueRetroSelectDescription, ...] = (
             ble, 0, accessory=opt
         ),
     ),
+    BlueRetroSelectDescription(
+        key="memory_card_bank",
+        translation_key="memory_card_bank",
+        options=["1", "2", "3", "4"],
+        current_fn=lambda s: (
+            str(s.memory_card_bank) if s.memory_card_bank is not None else None
+        ),
+        # Writing the global config reboots the adapter to apply (N64-only).
+        set_fn=lambda device, ble, opt: device.async_set_global_config(
+            ble, memory_card_bank=int(opt)
+        ),
+    ),
 )
 
 

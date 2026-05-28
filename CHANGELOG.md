@@ -6,6 +6,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-28
+
+### Added
+- **Memory Card Bank** select (N64) — choose which of the four emulated Controller
+  Pak banks player 1 uses. Writing it updates the adapter's global config and
+  reboots it to apply.
+
+### Changed
+- The read-only "Memory card bank" sensor is replaced by the new select.
+
 ## [0.2.1] - 2026-05-28
 
 ### Changed
@@ -101,7 +111,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   sensor / binary_sensor / button platforms for the BlueRetro adapter, backed by
   the `blueretro-ble` library.
 
-[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.3.0
 [0.2.1]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.2.1
 [0.2.0]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.2.0
 [0.1.4]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.1.4

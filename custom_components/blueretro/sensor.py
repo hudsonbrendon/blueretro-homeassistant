@@ -77,12 +77,6 @@ SENSORS: tuple[BlueRetroSensorDescription, ...] = (
         value_fn=lambda s: s.inquiry_mode,
     ),
     BlueRetroSensorDescription(
-        key="memory_card_bank",
-        translation_key="memory_card_bank",
-        entity_category=EntityCategory.DIAGNOSTIC,
-        value_fn=lambda s: s.memory_card_bank,
-    ),
-    BlueRetroSensorDescription(
         key="firmware_name",
         translation_key="firmware_name",
         entity_category=EntityCategory.DIAGNOSTIC,

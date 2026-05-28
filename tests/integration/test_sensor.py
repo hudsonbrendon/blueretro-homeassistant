@@ -56,7 +56,6 @@ async def test_sensors_report_values(hass):
     assert hass.states.get("sensor.blueretro_system").state == "PS2"
     assert hass.states.get("sensor.blueretro_multitap").state == "None"
     assert hass.states.get("sensor.blueretro_pairing_mode").state == "Manual"
-    assert hass.states.get("sensor.blueretro_memory_card_bank").state == "1"
     assert (
         hass.states.get("sensor.blueretro_firmware_name").state
         == "playstation hw1"

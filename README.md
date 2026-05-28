@@ -74,9 +74,9 @@ automatically via `manifest.json` `requirements`.
 | Type | Entity | Notes |
 |---|---|---|
 | `sensor` | Firmware, Game ID, Game, Config source | primary |
-| `sensor` | ABI version, BD address, Pairing mode, Multitap, Memory card bank, Firmware name | diagnostic |
+| `sensor` | ABI version, BD address, Pairing mode, Multitap, Firmware name | diagnostic |
 | `binary_sensor` | Config available | connectivity (on while idle/reachable) |
-| `select` | Controller mode, Accessory | writes the output config |
+| `select` | Controller mode, Accessory, Memory card bank | mode/accessory write the output config; **Memory card bank** (N64, 1–4) writes the global config and reboots the adapter to apply |
 | `button` | Reboot, Deep sleep | |
 
 ## How it works
@@ -96,6 +96,10 @@ library and is pulled in as a dependency.
 - **VMU (Dreamcast memory card) backup/restore is not provided** here: it needs a
   large BLE MTU and is unreliable over Home Assistant's Bluetooth stack. Use the
   official web config (in Chrome) for VMU backup/restore.
+- **N64 Controller Pak backup/restore is not provided** here — like the Dreamcast
+  VMU it needs a large BLE MTU and is unreliable over Home Assistant's Bluetooth
+  stack. Use the official web config (in Chrome). The integration does let you pick
+  the active **Memory Card Bank** (1–4) for N64.
 
 ## Contributing
 

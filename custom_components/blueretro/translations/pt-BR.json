@@ -26,7 +26,6 @@
       "system": { "name": "Sistema" },
       "multitap": { "name": "Multitap" },
       "inquiry_mode": { "name": "Modo de pareamento" },
-      "memory_card_bank": { "name": "Banco do cartão de memória" },
       "firmware_name": { "name": "Nome do firmware" }
     },
     "binary_sensor": {
@@ -38,7 +37,8 @@
     },
     "select": {
       "controller_mode": { "name": "Modo do controle" },
-      "accessory": { "name": "Acessório" }
+      "accessory": { "name": "Acessório" },
+      "memory_card_bank": { "name": "Banco do cartão de memória" }
     }
   }
 }
