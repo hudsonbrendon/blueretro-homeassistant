@@ -23,9 +23,6 @@
       "config_source": { "name": "Origen de configuración" },
       "abi_version": { "name": "Versión de ABI" },
       "bd_address": { "name": "Dirección BD" },
-      "system": { "name": "Sistema" },
-      "multitap": { "name": "Multitap" },
-      "inquiry_mode": { "name": "Modo de emparejamiento" },
       "firmware_name": { "name": "Nombre del firmware" }
     },
     "binary_sensor": {
@@ -38,7 +35,10 @@
     "select": {
       "controller_mode": { "name": "Modo del mando" },
       "accessory": { "name": "Accesorio" },
-      "memory_card_bank": { "name": "Banco de tarjeta de memoria" }
+      "memory_card_bank": { "name": "Banco de tarjeta de memoria" },
+      "multitap": { "name": "Multitap" },
+      "system": { "name": "Sistema" },
+      "inquiry_mode": { "name": "Modo de emparejamiento" }
     }
   }
 }

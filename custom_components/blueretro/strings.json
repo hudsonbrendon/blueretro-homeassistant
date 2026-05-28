@@ -23,9 +23,6 @@
       "config_source": { "name": "Config source" },
       "abi_version": { "name": "ABI version" },
       "bd_address": { "name": "BD address" },
-      "system": { "name": "System" },
-      "multitap": { "name": "Multitap" },
-      "inquiry_mode": { "name": "Pairing mode" },
       "firmware_name": { "name": "Firmware name" }
     },
     "binary_sensor": {
@@ -38,7 +35,10 @@
     "select": {
       "controller_mode": { "name": "Controller mode" },
       "accessory": { "name": "Accessory" },
-      "memory_card_bank": { "name": "Memory card bank" }
+      "memory_card_bank": { "name": "Memory card bank" },
+      "multitap": { "name": "Multitap" },
+      "system": { "name": "System" },
+      "inquiry_mode": { "name": "Pairing mode" }
     }
   }
 }
