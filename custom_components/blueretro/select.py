@@ -10,7 +10,15 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from blueretro_ble import ACCESSORY_CFG, DEVICE_CFG, BlueRetroDevice, BlueRetroState
+from blueretro_ble import (
+    ACCESSORY_CFG,
+    DEVICE_CFG,
+    INQUIRY_MODE,
+    MULTITAP_CFG,
+    SYSTEM_CFG,
+    BlueRetroDevice,
+    BlueRetroState,
+)
 
 from . import BlueRetroConfigEntry
 from .coordinator import BlueRetroCoordinator
@@ -54,6 +62,34 @@ SELECTS: tuple[BlueRetroSelectDescription, ...] = (
         # Writing the global config reboots the adapter to apply (N64-only).
         set_fn=lambda device, ble, opt: device.async_set_global_config(
             ble, memory_card_bank=int(opt)
+        ),
+    ),
+    BlueRetroSelectDescription(
+        key="multitap",
+        translation_key="multitap",
+        options=list(MULTITAP_CFG),
+        current_fn=lambda s: s.multitap,
+        # Global-config write; reboots the adapter to apply.
+        set_fn=lambda device, ble, opt: device.async_set_global_config(
+            ble, multitap=opt
+        ),
+    ),
+    BlueRetroSelectDescription(
+        key="system",
+        translation_key="system",
+        options=list(SYSTEM_CFG),
+        current_fn=lambda s: s.system,
+        set_fn=lambda device, ble, opt: device.async_set_global_config(
+            ble, system=opt
+        ),
+    ),
+    BlueRetroSelectDescription(
+        key="inquiry_mode",
+        translation_key="inquiry_mode",
+        options=list(INQUIRY_MODE),
+        current_fn=lambda s: s.inquiry_mode,
+        set_fn=lambda device, ble, opt: device.async_set_global_config(
+            ble, inquiry_mode=opt
         ),
     ),
 )

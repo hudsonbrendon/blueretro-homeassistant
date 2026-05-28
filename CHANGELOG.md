@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-28
+
+### Added
+- **Multitap**, **System** and **Pairing mode** selects — write the adapter's
+  global config (and reboot to apply). Multitap covers NES Four Score, SNES Super
+  Multitap, Mega Drive Team Player, PC Engine, Saturn, PSX and Jaguar; System
+  forces the emulated console; Pairing mode toggles auto/manual pairing.
+
+### Changed
+- The read-only System / Multitap / Pairing mode sensors are replaced by the new
+  selects.
+
 ## [0.3.0] - 2026-05-28
 
 ### Added
@@ -111,7 +123,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   sensor / binary_sensor / button platforms for the BlueRetro adapter, backed by
   the `blueretro-ble` library.
 
-[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/hudsonbrendon/blueretro-homeassistant/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.4.0
 [0.3.0]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.3.0
 [0.2.1]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.2.1
 [0.2.0]: https://github.com/hudsonbrendon/blueretro-homeassistant/releases/tag/v0.2.0

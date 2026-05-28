@@ -74,9 +74,9 @@ automatically via `manifest.json` `requirements`.
 | Type | Entity | Notes |
 |---|---|---|
 | `sensor` | Firmware, Game ID, Game, Config source | primary |
-| `sensor` | ABI version, BD address, Pairing mode, Multitap, Firmware name | diagnostic |
+| `sensor` | ABI version, BD address, Firmware name | diagnostic |
 | `binary_sensor` | Config available | connectivity (on while idle/reachable) |
-| `select` | Controller mode, Accessory, Memory card bank | mode/accessory write the output config; **Memory card bank** (N64, 1–4) writes the global config and reboots the adapter to apply |
+| `select` | Controller mode, Accessory, Memory card bank, Multitap, System, Pairing mode | mode/accessory write the output config; Memory card bank / Multitap / System / Pairing mode write the global config and reboot the adapter to apply |
 | `button` | Reboot, Deep sleep | |
 
 ## How it works

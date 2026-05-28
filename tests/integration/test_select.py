@@ -87,3 +87,69 @@ async def test_select_memory_card_bank_writes_global_config(hass):
                 blocking=True,
             )
     mock_set.assert_awaited_once_with(ble_device, memory_card_bank=3)
+
+
+async def test_select_multitap_writes_global_config(hass):
+    ble_device = AsyncMock()
+    state = BlueRetroState(available=True, multitap="None")
+    with (
+        patch(BLE_ADDR, return_value=ble_device),
+        patch(UPDATE, AsyncMock(return_value=state)),
+    ):
+        await _setup(hass, ble_device, state)
+        assert hass.states.get("select.blueretro_multitap").state == "None"
+        with patch(
+            "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_global_config",
+            AsyncMock(),
+        ) as mock_set:
+            await hass.services.async_call(
+                "select",
+                "select_option",
+                {"entity_id": "select.blueretro_multitap", "option": "Dual"},
+                blocking=True,
+            )
+    mock_set.assert_awaited_once_with(ble_device, multitap="Dual")
+
+
+async def test_select_system_writes_global_config(hass):
+    ble_device = AsyncMock()
+    state = BlueRetroState(available=True, system="Auto")
+    with (
+        patch(BLE_ADDR, return_value=ble_device),
+        patch(UPDATE, AsyncMock(return_value=state)),
+    ):
+        await _setup(hass, ble_device, state)
+        assert hass.states.get("select.blueretro_system").state == "Auto"
+        with patch(
+            "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_global_config",
+            AsyncMock(),
+        ) as mock_set:
+            await hass.services.async_call(
+                "select",
+                "select_option",
+                {"entity_id": "select.blueretro_system", "option": "N64"},
+                blocking=True,
+            )
+    mock_set.assert_awaited_once_with(ble_device, system="N64")
+
+
+async def test_select_pairing_mode_writes_global_config(hass):
+    ble_device = AsyncMock()
+    state = BlueRetroState(available=True, inquiry_mode="Auto")
+    with (
+        patch(BLE_ADDR, return_value=ble_device),
+        patch(UPDATE, AsyncMock(return_value=state)),
+    ):
+        await _setup(hass, ble_device, state)
+        assert hass.states.get("select.blueretro_pairing_mode").state == "Auto"
+        with patch(
+            "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_global_config",
+            AsyncMock(),
+        ) as mock_set:
+            await hass.services.async_call(
+                "select",
+                "select_option",
+                {"entity_id": "select.blueretro_pairing_mode", "option": "Manual"},
+                blocking=True,
+            )
+    mock_set.assert_awaited_once_with(ble_device, inquiry_mode="Manual")
