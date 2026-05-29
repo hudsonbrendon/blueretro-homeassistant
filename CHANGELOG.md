@@ -6,6 +6,18 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-28
+
+### Added
+- **Factory reset** button — restores the adapter to its original
+  firmware/configuration (BlueRetro System Manager "Factory Reset").
+- **Firmware update** entity (`update` platform) — detection-only: compares the
+  installed firmware to the latest `darthcloud/BlueRetro` GitHub release and
+  links to it. Installing over the air is not yet supported by the
+  `blueretro-ble` library.
+- **Options flow** — configurable poll interval (1–60 minutes); the entry
+  reloads automatically when changed.
+
 ## [0.4.0] - 2026-05-28
 
 ### Added

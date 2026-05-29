@@ -5,9 +5,10 @@ from bleak.backends.scanner import AdvertisementData
 from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
 from homeassistant.config_entries import SOURCE_BLUETOOTH
 from homeassistant.data_entry_flow import FlowResultType
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from blueretro_ble.const import SERVICE_UUID
-from custom_components.blueretro.const import DOMAIN
+from custom_components.blueretro.const import CONF_SCAN_INTERVAL, DOMAIN
 
 ADDRESS = "AA:BB:CC:DD:EE:FF"
 
@@ -64,3 +65,26 @@ async def test_bluetooth_discovery_rejects_non_blueretro(hass):
     )
     assert result["type"] is FlowResultType.ABORT
     assert result["reason"] == "not_supported"
+
+
+async def test_options_flow_sets_scan_interval(hass):
+    entry = MockConfigEntry(domain=DOMAIN, unique_id=ADDRESS, data={})
+    entry.add_to_hass(hass)
+    # Patch the integration setup so the options flow can be exercised without
+    # bringing up the BLE coordinator.
+    with patch(
+        "custom_components.blueretro.async_setup_entry", return_value=True
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done()
+
+        result = await hass.config_entries.options.async_init(entry.entry_id)
+        assert result["type"] is FlowResultType.FORM
+        assert result["step_id"] == "init"
+
+        result2 = await hass.config_entries.options.async_configure(
+            result["flow_id"], user_input={CONF_SCAN_INTERVAL: 10}
+        )
+
+    assert result2["type"] is FlowResultType.CREATE_ENTRY
+    assert entry.options[CONF_SCAN_INTERVAL] == 10

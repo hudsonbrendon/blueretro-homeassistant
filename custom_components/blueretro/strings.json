@@ -15,6 +15,16 @@
       "already_configured": "Device is already configured."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "data": { "scan_interval": "Polling interval (minutes)" },
+        "data_description": {
+          "scan_interval": "How often to poll the adapter while it is idle (1–60 minutes)."
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "firmware": { "name": "Firmware" },
@@ -30,7 +40,8 @@
     },
     "button": {
       "reboot": { "name": "Reboot" },
-      "deep_sleep": { "name": "Deep sleep" }
+      "deep_sleep": { "name": "Deep sleep" },
+      "factory_reset": { "name": "Factory reset" }
     },
     "select": {
       "controller_mode": { "name": "Controller mode" },
@@ -39,6 +50,9 @@
       "multitap": { "name": "Multitap" },
       "system": { "name": "System" },
       "inquiry_mode": { "name": "Pairing mode" }
+    },
+    "update": {
+      "firmware": { "name": "Firmware" }
     }
   }
 }
