@@ -40,3 +40,9 @@ class BlueRetroConfigAvailable(BlueRetroEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         return bool(self.coordinator.data and self.coordinator.data.available)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, str | None]:
+        # Surface *why* the adapter is unreachable so it can be diagnosed from
+        # the UI without enabling debug logging. ``None`` while reachable.
+        return {"reason": self.coordinator.last_error}

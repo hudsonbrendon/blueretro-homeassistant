@@ -41,16 +41,38 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
             CONF_OUTPUT_PORTS, DEFAULT_OUTPUT_PORTS
         )
         self.device = BlueRetroDevice()
+        # Human-readable reason the adapter is unavailable, surfaced as an
+        # attribute on the config-available sensor. ``None`` while reachable.
+        self.last_error: str | None = None
 
     async def _async_update_data(self) -> BlueRetroState:
         ble_device = bluetooth.async_ble_device_from_address(
             self.hass, self.address, connectable=True
         )
         if ble_device is None:
+            self.last_error = (
+                "No connectable Bluetooth path to the adapter. It is out of "
+                "range, powered off, busy with a controller, or only seen by a "
+                "passive (non-connectable) scanner/proxy. A connectable adapter "
+                "or ESPHome Bluetooth proxy must be in range while the adapter "
+                "is idle."
+            )
+            _LOGGER.debug("BlueRetro %s unavailable: %s", self.address, self.last_error)
             return BlueRetroState(available=False)
-        return await self.device.async_update(
+        state = await self.device.async_update(
             ble_device, output_ports=self.output_ports
         )
+        if state.available:
+            self.last_error = None
+        else:
+            self.last_error = (
+                "Found the adapter over Bluetooth but the connection or config "
+                "read failed. The adapter is most likely busy (a controller is "
+                "connected) or the BLE link is unstable. Enable debug logging "
+                "for 'blueretro_ble.device' to see the exact BLE error."
+            )
+            _LOGGER.debug("BlueRetro %s unavailable: %s", self.address, self.last_error)
+        return state
 
     def ble_device(self):
         """Return the current connectable BLEDevice or None."""

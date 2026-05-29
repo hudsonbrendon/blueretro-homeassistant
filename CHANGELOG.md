@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-05-29
+
+### Fixed
+- **Diagnose "connected but no data".** When the adapter is reachable over
+  Bluetooth but all entities show unavailable/unknown, the `Config available`
+  binary sensor now exposes a `reason` attribute explaining *why* — either no
+  connectable Bluetooth path (out of range, powered off, busy with a controller,
+  or only seen by a passive scanner/proxy) or a failed BLE connect/config read
+  (adapter busy / unstable link). Visible in the UI without enabling debug
+  logging.
+
 ## [0.7.0] - 2026-05-29
 
 ### Added
