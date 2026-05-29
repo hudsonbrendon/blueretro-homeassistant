@@ -1,0 +1,56 @@
+list_config_files:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+
+delete_config_file:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+    name:
+      required: true
+      example: GALE01
+      selector:
+        text:
+
+get_input_mapping:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+    config_id:
+      required: true
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+
+set_input_mapping:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+    config_id:
+      required: true
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    mappings:
+      required: true
+      selector:
+        object:

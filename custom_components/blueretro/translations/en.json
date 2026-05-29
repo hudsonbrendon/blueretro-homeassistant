@@ -60,5 +60,39 @@
     "update": {
       "firmware": { "name": "Firmware" }
     }
+  },
+  "services": {
+    "list_config_files": {
+      "name": "List config files",
+      "description": "List the per-GameID config files stored on the adapter.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." }
+      }
+    },
+    "delete_config_file": {
+      "name": "Delete config file",
+      "description": "Delete a stored per-GameID config file.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." },
+        "name": { "name": "File name", "description": "The config file name (raw GameID)." }
+      }
+    },
+    "get_input_mapping": {
+      "name": "Get input mapping",
+      "description": "Read the advanced input mappings for a config slot.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." },
+        "config_id": { "name": "Config slot", "description": "Input config slot index." }
+      }
+    },
+    "set_input_mapping": {
+      "name": "Set input mapping",
+      "description": "Write advanced input mappings to a config slot.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." },
+        "config_id": { "name": "Config slot", "description": "Input config slot index." },
+        "mappings": { "name": "Mappings", "description": "List of mapping entries (src, dest, dest_id, max, threshold, deadzone, turbo, scaling, diag_scaling)." }
+      }
+    }
   }
 }

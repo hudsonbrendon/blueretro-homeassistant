@@ -60,5 +60,39 @@
     "update": {
       "firmware": { "name": "Firmware" }
     }
+  },
+  "services": {
+    "list_config_files": {
+      "name": "Listar arquivos de configuração",
+      "description": "Lista os arquivos de configuração por GameID guardados no adaptador.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." }
+      }
+    },
+    "delete_config_file": {
+      "name": "Excluir arquivo de configuração",
+      "description": "Exclui um arquivo de configuração por GameID guardado.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
+        "name": { "name": "Nome do arquivo", "description": "O nome do arquivo (GameID bruto)." }
+      }
+    },
+    "get_input_mapping": {
+      "name": "Ler mapeamento de entrada",
+      "description": "Lê os mapeamentos avançados de entrada de um slot de configuração.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
+        "config_id": { "name": "Slot de configuração", "description": "Índice do slot de configuração de entrada." }
+      }
+    },
+    "set_input_mapping": {
+      "name": "Definir mapeamento de entrada",
+      "description": "Grava mapeamentos avançados de entrada em um slot de configuração.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
+        "config_id": { "name": "Slot de configuração", "description": "Índice do slot de configuração de entrada." },
+        "mappings": { "name": "Mapeamentos", "description": "Lista de entradas (src, dest, dest_id, max, threshold, deadzone, turbo, scaling, diag_scaling)." }
+      }
+    }
   }
 }

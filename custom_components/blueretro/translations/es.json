@@ -60,5 +60,39 @@
     "update": {
       "firmware": { "name": "Firmware" }
     }
+  },
+  "services": {
+    "list_config_files": {
+      "name": "Listar archivos de configuración",
+      "description": "Lista los archivos de configuración por GameID guardados en el adaptador.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "El adaptador BlueRetro." }
+      }
+    },
+    "delete_config_file": {
+      "name": "Eliminar archivo de configuración",
+      "description": "Elimina un archivo de configuración por GameID guardado.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "El adaptador BlueRetro." },
+        "name": { "name": "Nombre del archivo", "description": "El nombre del archivo (GameID en bruto)." }
+      }
+    },
+    "get_input_mapping": {
+      "name": "Leer asignación de entradas",
+      "description": "Lee las asignaciones avanzadas de entrada de una ranura de configuración.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "El adaptador BlueRetro." },
+        "config_id": { "name": "Ranura de configuración", "description": "Índice de la ranura de configuración de entrada." }
+      }
+    },
+    "set_input_mapping": {
+      "name": "Definir asignación de entradas",
+      "description": "Escribe asignaciones avanzadas de entrada en una ranura de configuración.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "El adaptador BlueRetro." },
+        "config_id": { "name": "Ranura de configuración", "description": "Índice de la ranura de configuración de entrada." },
+        "mappings": { "name": "Asignaciones", "description": "Lista de entradas (src, dest, dest_id, max, threshold, deadzone, turbo, scaling, diag_scaling)." }
+      }
+    }
   }
 }

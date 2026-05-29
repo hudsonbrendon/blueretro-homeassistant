@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-29
+
+### Added
+- **Config files & input mapping services.** Four new services (target a
+  BlueRetro device): `blueretro.list_config_files`, `blueretro.delete_config_file`,
+  `blueretro.get_input_mapping`, `blueretro.set_input_mapping`. These are the
+  small-payload BlueRetro operations that can work over Home Assistant's
+  Bluetooth stack. Requires `blueretro-ble==0.7.0`.
+
+### Note
+- Large transfers (VMU/N64 pak backup-restore, OTA firmware install) are
+  implemented in `blueretro-ble` 0.7.0 but **not exposed here**: they need a high
+  negotiated MTU that the HA/BlueZ stack doesn't provide (use the official web
+  config in Chrome, MTU 517).
+
 ## [0.6.0] - 2026-05-29
 
 ### Added

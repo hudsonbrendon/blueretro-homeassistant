@@ -90,6 +90,22 @@ minutes, default 5) and the number of output ports to expose (1–12, default 1)
 Raise the port count for multitap setups to get a Controller mode / Accessory
 pair per port.
 
+## Services
+
+Target a BlueRetro device:
+
+| Service | What it does |
+|---|---|
+| `blueretro.list_config_files` | List the per-GameID config files on the adapter (returns a response). |
+| `blueretro.delete_config_file` | Delete a stored per-GameID config file by name. |
+| `blueretro.get_input_mapping` | Read advanced input mappings for a config slot (returns a response). |
+| `blueretro.set_input_mapping` | Write advanced input mappings (src/dest/dest_id/max/threshold/deadzone/turbo/scaling/diag_scaling) to a slot. |
+
+> **Not exposed:** memory-card (VMU) and N64 Controller Pak backup/restore and
+> OTA firmware install are implemented in `blueretro-ble` but need a high BLE MTU
+> that Home Assistant's stack doesn't negotiate. Use the official
+> [web config](https://blueretro.io) (Chrome, MTU 517) for those large transfers.
+
 ## How it works
 
 This repository ships **only** the Home Assistant integration. All Bluetooth
