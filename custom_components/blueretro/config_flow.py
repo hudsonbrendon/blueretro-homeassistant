@@ -20,9 +20,12 @@ import voluptuous as vol
 from blueretro_ble import supports
 
 from .const import (
+    CONF_OUTPUT_PORTS,
     CONF_SCAN_INTERVAL,
+    DEFAULT_OUTPUT_PORTS,
     DEFAULT_SCAN_INTERVAL_MINUTES,
     DOMAIN,
+    MAX_OUTPUT_PORTS,
     MAX_SCAN_INTERVAL_MINUTES,
     MIN_SCAN_INTERVAL_MINUTES,
 )
@@ -104,31 +107,41 @@ class BlueRetroConfigFlow(ConfigFlow, domain=DOMAIN):
 
 
 class BlueRetroOptionsFlow(OptionsFlow):
-    """Tune how often the adapter is polled while idle."""
+    """Tune the poll interval and how many output ports are exposed."""
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> ConfigFlowResult:
-        """Manage the poll interval."""
+        """Manage the poll interval and output-port count."""
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        current = self.config_entry.options.get(
-            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES
-        )
+        opts = self.config_entry.options
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_SCAN_INTERVAL, default=current
+                        CONF_SCAN_INTERVAL,
+                        default=opts.get(
+                            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES
+                        ),
                     ): vol.All(
                         vol.Coerce(int),
                         vol.Range(
                             min=MIN_SCAN_INTERVAL_MINUTES,
                             max=MAX_SCAN_INTERVAL_MINUTES,
                         ),
-                    )
+                    ),
+                    vol.Required(
+                        CONF_OUTPUT_PORTS,
+                        default=opts.get(
+                            CONF_OUTPUT_PORTS, DEFAULT_OUTPUT_PORTS
+                        ),
+                    ): vol.All(
+                        vol.Coerce(int),
+                        vol.Range(min=1, max=MAX_OUTPUT_PORTS),
+                    ),
                 }
             ),
         )

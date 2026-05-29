@@ -6,6 +6,41 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-05-29
+
+### Fixed
+- **Diagnose "connected but no data".** When the adapter is reachable over
+  Bluetooth but all entities show unavailable/unknown, the `Config available`
+  binary sensor now exposes a `reason` attribute explaining *why* — either no
+  connectable Bluetooth path (out of range, powered off, busy with a controller,
+  or only seen by a passive scanner/proxy) or a failed BLE connect/config read
+  (adapter busy / unstable link). Visible in the UI without enabling debug
+  logging.
+
+## [0.7.0] - 2026-05-29
+
+### Added
+- **Config files & input mapping services.** Four new services (target a
+  BlueRetro device): `blueretro.list_config_files`, `blueretro.delete_config_file`,
+  `blueretro.get_input_mapping`, `blueretro.set_input_mapping`. These are the
+  small-payload BlueRetro operations that can work over Home Assistant's
+  Bluetooth stack. Requires `blueretro-ble==0.7.0`.
+
+### Note
+- Large transfers (VMU/N64 pak backup-restore, OTA firmware install) are
+  implemented in `blueretro-ble` 0.7.0 but **not exposed here**: they need a high
+  negotiated MTU that the HA/BlueZ stack doesn't provide (use the official web
+  config in Chrome, MTU 517).
+
+## [0.6.0] - 2026-05-29
+
+### Added
+- **Per-port output config (multitap).** Controller mode and Accessory selects
+  are now created per output port. Set the number of ports (1–12) in the
+  integration's **Configure** dialog; the entry reloads and exposes
+  `Controller mode (port N)` / `Accessory (port N)` for each. Port 1 keeps its
+  original entity IDs. Requires `blueretro-ble==0.6.0`.
+
 ## [0.5.0] - 2026-05-28
 
 ### Added

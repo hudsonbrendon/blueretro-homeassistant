@@ -18,9 +18,13 @@
   "options": {
     "step": {
       "init": {
-        "data": { "scan_interval": "Polling interval (minutes)" },
+        "data": {
+          "scan_interval": "Polling interval (minutes)",
+          "output_ports": "Output ports (multitap)"
+        },
         "data_description": {
-          "scan_interval": "How often to poll the adapter while it is idle (1–60 minutes)."
+          "scan_interval": "How often to poll the adapter while it is idle (1–60 minutes).",
+          "output_ports": "How many output ports to read and expose (1 for a single controller; raise for multitap, up to 12)."
         }
       }
     }
@@ -46,6 +50,8 @@
     "select": {
       "controller_mode": { "name": "Controller mode" },
       "accessory": { "name": "Accessory" },
+      "controller_mode_port": { "name": "Controller mode (port {port})" },
+      "accessory_port": { "name": "Accessory (port {port})" },
       "memory_card_bank": { "name": "Memory card bank" },
       "multitap": { "name": "Multitap" },
       "system": { "name": "System" },
@@ -53,6 +59,40 @@
     },
     "update": {
       "firmware": { "name": "Firmware" }
+    }
+  },
+  "services": {
+    "list_config_files": {
+      "name": "List config files",
+      "description": "List the per-GameID config files stored on the adapter.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." }
+      }
+    },
+    "delete_config_file": {
+      "name": "Delete config file",
+      "description": "Delete a stored per-GameID config file.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." },
+        "name": { "name": "File name", "description": "The config file name (raw GameID)." }
+      }
+    },
+    "get_input_mapping": {
+      "name": "Get input mapping",
+      "description": "Read the advanced input mappings for a config slot.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." },
+        "config_id": { "name": "Config slot", "description": "Input config slot index." }
+      }
+    },
+    "set_input_mapping": {
+      "name": "Set input mapping",
+      "description": "Write advanced input mappings to a config slot.",
+      "fields": {
+        "device_id": { "name": "Device", "description": "The BlueRetro adapter." },
+        "config_id": { "name": "Config slot", "description": "Input config slot index." },
+        "mappings": { "name": "Mappings", "description": "List of mapping entries (src, dest, dest_id, max, threshold, deadzone, turbo, scaling, diag_scaling)." }
+      }
     }
   }
 }

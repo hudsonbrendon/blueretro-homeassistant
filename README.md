@@ -30,13 +30,13 @@ automatically via `manifest.json` `requirements`.
 - 🟢 **Config available** — a connectivity `binary_sensor`, on while the adapter is
   idle and reachable.
 - 🎛️ **Selects** — Controller mode (GamePad / GamePadAlt / Keyboard / Mouse) and
-  Accessory (None / Memory / Rumble / Both) for the first output, plus Memory card
-  bank, Multitap, System and Pairing mode (global config).
+  Accessory (None / Memory / Rumble / Both) **per output port** (multitap), plus
+  Memory card bank, Multitap, System and Pairing mode (global config).
 - 🔁 **Buttons** — Reboot, Deep sleep and Factory reset.
 - ⬆️ **Firmware update** — an `update` entity that flags when a newer
   `darthcloud/BlueRetro` release exists and links to it (detection only; no OTA).
-- ⏱️ **Configurable poll interval** — tune how often the adapter is polled (1–60
-  minutes) from the integration's options.
+- ⏱️ **Configurable** — tune the poll interval (1–60 minutes) and the number of
+  output ports to expose (1–12, for multitap) from the integration's options.
 - 🌍 **Translations** — English, Portuguese (BR and PT) and Spanish.
 - 📡 **Works through ESPHome Bluetooth proxies** — uses Home Assistant's shared
   Bluetooth stack, so the adapter only needs to be near a proxy, not the HA host.
@@ -81,12 +81,30 @@ automatically via `manifest.json` `requirements`.
 | `sensor` | Firmware, Game ID, Game, Config source | primary |
 | `sensor` | ABI version, BD address, Firmware name | diagnostic |
 | `binary_sensor` | Config available | connectivity (on while idle/reachable) |
-| `select` | Controller mode, Accessory, Memory card bank, Multitap, System, Pairing mode | mode/accessory write the output config; Memory card bank / Multitap / System / Pairing mode write the global config and reboot the adapter to apply |
+| `select` | Controller mode / Accessory (per port), Memory card bank, Multitap, System, Pairing mode | mode/accessory write the per-port output config; Memory card bank / Multitap / System / Pairing mode write the global config and reboot the adapter to apply |
 | `button` | Reboot, Deep sleep, Factory reset | Factory reset restores original firmware/configuration |
 | `update` | Firmware | flags a newer GitHub release; detection only (no OTA install) |
 
-The poll interval is configurable via the integration's **Configure** (options)
-dialog — between 1 and 60 minutes (default 5).
+The integration's **Configure** (options) dialog tunes the poll interval (1–60
+minutes, default 5) and the number of output ports to expose (1–12, default 1).
+Raise the port count for multitap setups to get a Controller mode / Accessory
+pair per port.
+
+## Services
+
+Target a BlueRetro device:
+
+| Service | What it does |
+|---|---|
+| `blueretro.list_config_files` | List the per-GameID config files on the adapter (returns a response). |
+| `blueretro.delete_config_file` | Delete a stored per-GameID config file by name. |
+| `blueretro.get_input_mapping` | Read advanced input mappings for a config slot (returns a response). |
+| `blueretro.set_input_mapping` | Write advanced input mappings (src/dest/dest_id/max/threshold/deadzone/turbo/scaling/diag_scaling) to a slot. |
+
+> **Not exposed:** memory-card (VMU) and N64 Controller Pak backup/restore and
+> OTA firmware install are implemented in `blueretro-ble` but need a high BLE MTU
+> that Home Assistant's stack doesn't negotiate. Use the official
+> [web config](https://blueretro.io) (Chrome, MTU 517) for those large transfers.
 
 ## How it works
 

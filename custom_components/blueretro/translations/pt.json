@@ -18,9 +18,13 @@
   "options": {
     "step": {
       "init": {
-        "data": { "scan_interval": "Intervalo de consulta (minutos)" },
+        "data": {
+          "scan_interval": "Intervalo de consulta (minutos)",
+          "output_ports": "Portas de saída (multitap)"
+        },
         "data_description": {
-          "scan_interval": "Com que frequência consultar o adaptador enquanto inativo (1–60 minutos)."
+          "scan_interval": "Com que frequência consultar o adaptador enquanto inativo (1–60 minutos).",
+          "output_ports": "Quantas portas de saída ler e expor (1 para um único comando; aumente para multitap, até 12)."
         }
       }
     }
@@ -46,6 +50,8 @@
     "select": {
       "controller_mode": { "name": "Modo do comando" },
       "accessory": { "name": "Acessório" },
+      "controller_mode_port": { "name": "Modo do comando (porta {port})" },
+      "accessory_port": { "name": "Acessório (porta {port})" },
       "memory_card_bank": { "name": "Banco do cartão de memória" },
       "multitap": { "name": "Multitap" },
       "system": { "name": "Sistema" },
@@ -53,6 +59,40 @@
     },
     "update": {
       "firmware": { "name": "Firmware" }
+    }
+  },
+  "services": {
+    "list_config_files": {
+      "name": "Listar ficheiros de configuração",
+      "description": "Lista os ficheiros de configuração por GameID guardados no adaptador.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." }
+      }
+    },
+    "delete_config_file": {
+      "name": "Eliminar ficheiro de configuração",
+      "description": "Elimina um ficheiro de configuração por GameID guardado.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
+        "name": { "name": "Nome do ficheiro", "description": "O nome do ficheiro (GameID em bruto)." }
+      }
+    },
+    "get_input_mapping": {
+      "name": "Ler mapeamento de entrada",
+      "description": "Lê os mapeamentos avançados de entrada de um slot de configuração.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
+        "config_id": { "name": "Slot de configuração", "description": "Índice do slot de configuração de entrada." }
+      }
+    },
+    "set_input_mapping": {
+      "name": "Definir mapeamento de entrada",
+      "description": "Grava mapeamentos avançados de entrada num slot de configuração.",
+      "fields": {
+        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
+        "config_id": { "name": "Slot de configuração", "description": "Índice do slot de configuração de entrada." },
+        "mappings": { "name": "Mapeamentos", "description": "Lista de entradas (src, dest, dest_id, max, threshold, deadzone, turbo, scaling, diag_scaling)." }
+      }
     }
   }
 }
