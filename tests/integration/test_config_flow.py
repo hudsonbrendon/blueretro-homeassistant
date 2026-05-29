@@ -8,7 +8,11 @@ from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from blueretro_ble.const import SERVICE_UUID
-from custom_components.blueretro.const import CONF_SCAN_INTERVAL, DOMAIN
+from custom_components.blueretro.const import (
+    CONF_OUTPUT_PORTS,
+    CONF_SCAN_INTERVAL,
+    DOMAIN,
+)
 
 ADDRESS = "AA:BB:CC:DD:EE:FF"
 
@@ -83,8 +87,10 @@ async def test_options_flow_sets_scan_interval(hass):
         assert result["step_id"] == "init"
 
         result2 = await hass.config_entries.options.async_configure(
-            result["flow_id"], user_input={CONF_SCAN_INTERVAL: 10}
+            result["flow_id"],
+            user_input={CONF_SCAN_INTERVAL: 10, CONF_OUTPUT_PORTS: 4},
         )
 
     assert result2["type"] is FlowResultType.CREATE_ENTRY
     assert entry.options[CONF_SCAN_INTERVAL] == 10
+    assert entry.options[CONF_OUTPUT_PORTS] == 4

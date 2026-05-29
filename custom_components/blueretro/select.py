@@ -31,27 +31,67 @@ class BlueRetroSelectDescription(SelectEntityDescription):
 
     current_fn: Callable[[BlueRetroState], str | None]
     set_fn: Callable[[BlueRetroDevice, object, str], Awaitable[None]]
+    placeholders: dict[str, str] | None = None
 
 
-SELECTS: tuple[BlueRetroSelectDescription, ...] = (
-    BlueRetroSelectDescription(
-        key="controller_mode",
-        translation_key="controller_mode",
-        options=list(DEVICE_CFG),
-        current_fn=lambda s: s.controller_mode,
-        set_fn=lambda device, ble, opt: device.async_set_output_config(
-            ble, 0, device=opt
-        ),
-    ),
-    BlueRetroSelectDescription(
-        key="accessory",
-        translation_key="accessory",
-        options=list(ACCESSORY_CFG),
-        current_fn=lambda s: s.accessory,
-        set_fn=lambda device, ble, opt: device.async_set_output_config(
-            ble, 0, accessory=opt
-        ),
-    ),
+def _output_selects(ports: int) -> list[BlueRetroSelectDescription]:
+    """Build per-port controller-mode + accessory selects for ``ports`` ports.
+
+    Port 0 keeps the original ``controller_mode`` / ``accessory`` keys (stable
+    entity IDs); higher ports get ``*_port{N}`` keys with a localized
+    ``(port N)`` suffix.
+    """
+    descs: list[BlueRetroSelectDescription] = []
+    for port in range(ports):
+        suffix = "" if port == 0 else f"_port{port + 1}"
+        placeholders = None if port == 0 else {"port": str(port + 1)}
+        descs.append(
+            BlueRetroSelectDescription(
+                key=f"controller_mode{suffix}",
+                translation_key=(
+                    "controller_mode" if port == 0 else "controller_mode_port"
+                ),
+                placeholders=placeholders,
+                options=list(DEVICE_CFG),
+                current_fn=lambda s, p=port: _port_value(s, p)[0],
+                set_fn=lambda device, ble, opt, p=port: (
+                    device.async_set_output_config(ble, p, device=opt)
+                ),
+            )
+        )
+        descs.append(
+            BlueRetroSelectDescription(
+                key=f"accessory{suffix}",
+                translation_key=(
+                    "accessory" if port == 0 else "accessory_port"
+                ),
+                placeholders=placeholders,
+                options=list(ACCESSORY_CFG),
+                current_fn=lambda s, p=port: _port_value(s, p)[1],
+                set_fn=lambda device, ble, opt, p=port: (
+                    device.async_set_output_config(ble, p, accessory=opt)
+                ),
+            )
+        )
+    return descs
+
+
+def _port_value(
+    state: BlueRetroState, port: int
+) -> tuple[str | None, str | None]:
+    """Return ``(device, accessory)`` for a port.
+
+    Prefers ``state.ports``; for port 0 falls back to the legacy
+    ``controller_mode`` / ``accessory`` mirror when ``ports`` is empty.
+    """
+    if port in state.ports:
+        return state.ports[port]
+    if port == 0:
+        return (state.controller_mode, state.accessory)
+    return (None, None)
+
+
+GLOBAL_SELECTS: tuple[BlueRetroSelectDescription, ...] = (
     BlueRetroSelectDescription(
         key="memory_card_bank",
         translation_key="memory_card_bank",
@@ -100,13 +140,18 @@ async def async_setup_entry(
     entry: BlueRetroConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up BlueRetro selects."""
+    """Set up BlueRetro selects (per-port output config + global config)."""
     coordinator = entry.runtime_data
-    async_add_entities(BlueRetroSelect(coordinator, desc) for desc in SELECTS)
+    descriptions = _output_selects(coordinator.output_ports) + list(
+        GLOBAL_SELECTS
+    )
+    async_add_entities(
+        BlueRetroSelect(coordinator, desc) for desc in descriptions
+    )
 
 
 class BlueRetroSelect(BlueRetroEntity, SelectEntity):
-    """A BlueRetro output-config select (port 1)."""
+    """A BlueRetro output-config or global-config select."""
 
     entity_description: BlueRetroSelectDescription
 
@@ -119,6 +164,8 @@ class BlueRetroSelect(BlueRetroEntity, SelectEntity):
         self.entity_description = description
         self._attr_unique_id = f"{coordinator.address}_{description.key}"
         self._attr_options = list(description.options or [])
+        if description.placeholders:
+            self._attr_translation_placeholders = description.placeholders
 
     @property
     def available(self) -> bool:

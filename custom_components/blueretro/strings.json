@@ -18,9 +18,13 @@
   "options": {
     "step": {
       "init": {
-        "data": { "scan_interval": "Polling interval (minutes)" },
+        "data": {
+          "scan_interval": "Polling interval (minutes)",
+          "output_ports": "Output ports (multitap)"
+        },
         "data_description": {
-          "scan_interval": "How often to poll the adapter while it is idle (1–60 minutes)."
+          "scan_interval": "How often to poll the adapter while it is idle (1–60 minutes).",
+          "output_ports": "How many output ports to read and expose (1 for a single controller; raise for multitap, up to 12)."
         }
       }
     }
@@ -46,6 +50,8 @@
     "select": {
       "controller_mode": { "name": "Controller mode" },
       "accessory": { "name": "Accessory" },
+      "controller_mode_port": { "name": "Controller mode (port {port})" },
+      "accessory_port": { "name": "Accessory (port {port})" },
       "memory_card_bank": { "name": "Memory card bank" },
       "multitap": { "name": "Multitap" },
       "system": { "name": "System" },

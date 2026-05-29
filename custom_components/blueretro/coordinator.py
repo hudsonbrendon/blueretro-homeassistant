@@ -12,7 +12,13 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from blueretro_ble import BlueRetroDevice, BlueRetroState
 
-from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES, DOMAIN
+from .const import (
+    CONF_OUTPUT_PORTS,
+    CONF_SCAN_INTERVAL,
+    DEFAULT_OUTPUT_PORTS,
+    DEFAULT_SCAN_INTERVAL_MINUTES,
+    DOMAIN,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,6 +37,9 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
             update_interval=timedelta(minutes=minutes),
         )
         self.address: str = entry.unique_id
+        self.output_ports: int = entry.options.get(
+            CONF_OUTPUT_PORTS, DEFAULT_OUTPUT_PORTS
+        )
         self.device = BlueRetroDevice()
 
     async def _async_update_data(self) -> BlueRetroState:
@@ -39,7 +48,9 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
         )
         if ble_device is None:
             return BlueRetroState(available=False)
-        return await self.device.async_update(ble_device)
+        return await self.device.async_update(
+            ble_device, output_ports=self.output_ports
+        )
 
     def ble_device(self):
         """Return the current connectable BLEDevice or None."""

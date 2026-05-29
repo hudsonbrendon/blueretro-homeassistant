@@ -6,6 +6,15 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-05-29
+
+### Added
+- **Per-port output config (multitap).** Controller mode and Accessory selects
+  are now created per output port. Set the number of ports (1–12) in the
+  integration's **Configure** dialog; the entry reloads and exposes
+  `Controller mode (port N)` / `Accessory (port N)` for each. Port 1 keeps its
+  original entity IDs. Requires `blueretro-ble==0.6.0`.
+
 ## [0.5.0] - 2026-05-28
 
 ### Added

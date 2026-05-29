@@ -18,9 +18,13 @@
   "options": {
     "step": {
       "init": {
-        "data": { "scan_interval": "Intervalo de sondeo (minutos)" },
+        "data": {
+          "scan_interval": "Intervalo de sondeo (minutos)",
+          "output_ports": "Puertos de salida (multitap)"
+        },
         "data_description": {
-          "scan_interval": "Con qué frecuencia consultar el adaptador mientras está inactivo (1–60 minutos)."
+          "scan_interval": "Con qué frecuencia consultar el adaptador mientras está inactivo (1–60 minutos).",
+          "output_ports": "Cuántos puertos de salida leer y exponer (1 para un único mando; auméntalo para multitap, hasta 12)."
         }
       }
     }
@@ -46,6 +50,8 @@
     "select": {
       "controller_mode": { "name": "Modo del mando" },
       "accessory": { "name": "Accesorio" },
+      "controller_mode_port": { "name": "Modo del mando (puerto {port})" },
+      "accessory_port": { "name": "Accesorio (puerto {port})" },
       "memory_card_bank": { "name": "Banco de tarjeta de memoria" },
       "multitap": { "name": "Multitap" },
       "system": { "name": "Sistema" },
