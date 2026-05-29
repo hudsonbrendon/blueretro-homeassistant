@@ -30,8 +30,13 @@ automatically via `manifest.json` `requirements`.
 - 🟢 **Config available** — a connectivity `binary_sensor`, on while the adapter is
   idle and reachable.
 - 🎛️ **Selects** — Controller mode (GamePad / GamePadAlt / Keyboard / Mouse) and
-  Accessory (None / Memory / Rumble / Both) for the first output.
-- 🔁 **Buttons** — Reboot and Deep sleep.
+  Accessory (None / Memory / Rumble / Both) for the first output, plus Memory card
+  bank, Multitap, System and Pairing mode (global config).
+- 🔁 **Buttons** — Reboot, Deep sleep and Factory reset.
+- ⬆️ **Firmware update** — an `update` entity that flags when a newer
+  `darthcloud/BlueRetro` release exists and links to it (detection only; no OTA).
+- ⏱️ **Configurable poll interval** — tune how often the adapter is polled (1–60
+  minutes) from the integration's options.
 - 🌍 **Translations** — English, Portuguese (BR and PT) and Spanish.
 - 📡 **Works through ESPHome Bluetooth proxies** — uses Home Assistant's shared
   Bluetooth stack, so the adapter only needs to be near a proxy, not the HA host.
@@ -77,7 +82,11 @@ automatically via `manifest.json` `requirements`.
 | `sensor` | ABI version, BD address, Firmware name | diagnostic |
 | `binary_sensor` | Config available | connectivity (on while idle/reachable) |
 | `select` | Controller mode, Accessory, Memory card bank, Multitap, System, Pairing mode | mode/accessory write the output config; Memory card bank / Multitap / System / Pairing mode write the global config and reboot the adapter to apply |
-| `button` | Reboot, Deep sleep | |
+| `button` | Reboot, Deep sleep, Factory reset | Factory reset restores original firmware/configuration |
+| `update` | Firmware | flags a newer GitHub release; detection only (no OTA install) |
+
+The poll interval is configurable via the integration's **Configure** (options)
+dialog — between 1 and 60 minutes (default 5).
 
 ## How it works
 

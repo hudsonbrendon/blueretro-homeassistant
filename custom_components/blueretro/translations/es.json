@@ -15,6 +15,16 @@
       "already_configured": "El dispositivo ya está configurado."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "data": { "scan_interval": "Intervalo de sondeo (minutos)" },
+        "data_description": {
+          "scan_interval": "Con qué frecuencia consultar el adaptador mientras está inactivo (1–60 minutos)."
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "firmware": { "name": "Firmware" },
@@ -30,7 +40,8 @@
     },
     "button": {
       "reboot": { "name": "Reiniciar" },
-      "deep_sleep": { "name": "Suspensión profunda" }
+      "deep_sleep": { "name": "Suspensión profunda" },
+      "factory_reset": { "name": "Restablecer de fábrica" }
     },
     "select": {
       "controller_mode": { "name": "Modo del mando" },
@@ -39,6 +50,9 @@
       "multitap": { "name": "Multitap" },
       "system": { "name": "Sistema" },
       "inquiry_mode": { "name": "Modo de emparejamiento" }
+    },
+    "update": {
+      "firmware": { "name": "Firmware" }
     }
   }
 }

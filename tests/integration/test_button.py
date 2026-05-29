@@ -61,6 +61,26 @@ async def test_deep_sleep_button_calls_device(hass):
     mock_sleep.assert_awaited_once_with(ble_device)
 
 
+async def test_factory_reset_button_calls_device(hass):
+    ble_device = AsyncMock()
+    with (
+        patch(BLE_ADDR, return_value=ble_device),
+        patch(UPDATE, AsyncMock(return_value=BlueRetroState(available=True))),
+    ):
+        await _setup(hass)
+        with patch(
+            "custom_components.blueretro.coordinator.BlueRetroDevice.async_factory_reset",
+            AsyncMock(),
+        ) as mock_reset:
+            await hass.services.async_call(
+                "button",
+                "press",
+                {"entity_id": "button.blueretro_factory_reset"},
+                blocking=True,
+            )
+    mock_reset.assert_awaited_once_with(ble_device)
+
+
 async def test_button_raises_when_device_unreachable(hass):
     # Setup succeeds (update returns a state), but no connectable device is found
     # when the button is pressed, so the press must raise.

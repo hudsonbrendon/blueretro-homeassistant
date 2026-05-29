@@ -38,6 +38,12 @@ BUTTONS: tuple[BlueRetroButtonDescription, ...] = (
         translation_key="deep_sleep",
         press_fn=lambda device, ble: device.async_deep_sleep(ble),
     ),
+    BlueRetroButtonDescription(
+        key="factory_reset",
+        translation_key="factory_reset",
+        # Restores the adapter to its original firmware/configuration.
+        press_fn=lambda device, ble: device.async_factory_reset(ble),
+    ),
 )
 
 

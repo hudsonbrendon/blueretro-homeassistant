@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import timedelta
 
 from homeassistant.components import bluetooth
 from homeassistant.config_entries import ConfigEntry
@@ -11,7 +12,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from blueretro_ble import BlueRetroDevice, BlueRetroState
 
-from .const import DOMAIN, SCAN_INTERVAL
+from .const import CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,8 +21,14 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
     """Polls a BlueRetro adapter while it is idle/connectable."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
+        minutes = entry.options.get(
+            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES
+        )
         super().__init__(
-            hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL
+            hass,
+            _LOGGER,
+            name=DOMAIN,
+            update_interval=timedelta(minutes=minutes),
         )
         self.address: str = entry.unique_id
         self.device = BlueRetroDevice()
