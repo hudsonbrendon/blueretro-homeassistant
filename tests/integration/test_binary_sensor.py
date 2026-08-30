@@ -20,7 +20,7 @@ async def _setup(hass, state):
         ),
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
 
 
 async def test_config_available_on_when_idle(hass):
@@ -66,7 +66,7 @@ async def test_reason_when_no_connectable_path(hass):
         ),
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
     state = hass.states.get("binary_sensor.blueretro_config_available")
     assert state.state == "off"
     assert "connectable Bluetooth path" in state.attributes["reason"]
@@ -93,14 +93,14 @@ async def test_in_use_follows_advertisement_presence(hass):
     coordinator = entry.runtime_data
 
     coordinator._async_seen(_adv(), None)
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
     state = hass.states.get("binary_sensor.blueretro_controller_connected")
     assert state.state == "off"
     assert state.attributes["last_seen"] is not None
     assert coordinator.rssi == -60
 
     coordinator._async_gone(_adv())
-    await hass.async_block_till_done()
+    await hass.async_block_till_done(wait_background_tasks=True)
     assert hass.states.get("binary_sensor.blueretro_controller_connected").state == "on"
 
 
@@ -110,5 +110,5 @@ async def test_advertisement_back_triggers_refresh(hass):
     coordinator._async_gone(_adv())
     with patch.object(coordinator, "async_request_refresh", AsyncMock()) as refresh:
         coordinator._async_seen(_adv(), None)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
     refresh.assert_awaited_once()

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import datetime, timedelta
 
@@ -13,10 +14,11 @@ from homeassistant.components.bluetooth import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import dt as dt_util
 
-from blueretro_ble import BlueRetroDevice, BlueRetroState
+from blueretro_ble import BlueRetroDevice, BlueRetroState, parse_firmware
 
 from .const import (
     CONF_OUTPUT_PORTS,
@@ -27,6 +29,10 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+# Upper bound for one connect-and-read; bleak-retry-connector's own retries
+# and backoff can otherwise pin a poll for many minutes.
+POLL_TIMEOUT = 120
 
 
 class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
@@ -98,10 +104,36 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
         self.last_seen = dt_util.utcnow()
 
     @callback
+    def _async_sync_device(self, state: BlueRetroState | None = None) -> None:
+        """Push late-arriving facts (adv name, firmware) into the device registry.
+
+        Entities register the device before the first BLE read (setup never
+        blocks on Bluetooth) and possibly before the adapter advertises, so the
+        registry is refreshed here instead. ``name`` is the integration-provided
+        name; a user rename (``name_by_user``) is untouched.
+        """
+        reg = dr.async_get(self.hass)
+        device = reg.async_get_device(identifiers={(DOMAIN, self.address)})
+        if device is None:
+            return
+        changes: dict[str, str] = {}
+        if self.adv_name and device.name != self.adv_name:
+            changes["name"] = self.adv_name
+        if state is not None and state.available:
+            sw, hw, platform = parse_firmware(state.fw_version)
+            model = f"BlueRetro ({platform})" if platform else "BlueRetro"
+            for key, value in (("sw_version", sw), ("hw_version", hw), ("model", model)):
+                if value and getattr(device, key) != value:
+                    changes[key] = value
+        if changes:
+            reg.async_update_device(device.id, **changes)
+
+    @callback
     def _async_seen(
         self, info: BluetoothServiceInfoBleak, change: BluetoothChange
     ) -> None:
         self._record(info)
+        self._async_sync_device()
         was_in_use = self.in_use
         self.in_use = False
         if was_in_use:
@@ -129,11 +161,22 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
             )
             _LOGGER.debug("BlueRetro %s unavailable: %s", self.address, self.last_error)
             return BlueRetroState(available=False)
-        state = await self.device.async_update(
-            ble_device, output_ports=self.output_ports
-        )
+        try:
+            async with asyncio.timeout(POLL_TIMEOUT):
+                state = await self.device.async_update(
+                    ble_device, output_ports=self.output_ports
+                )
+        except TimeoutError:
+            self.last_error = (
+                f"Connecting to the adapter took longer than {POLL_TIMEOUT}s. "
+                "The Bluetooth host may be holding a stale connection; it "
+                "usually clears on the next poll."
+            )
+            _LOGGER.debug("BlueRetro %s unavailable: %s", self.address, self.last_error)
+            return BlueRetroState(available=False)
         if state.available:
             self.last_error = None
+            self._async_sync_device(state)
         else:
             self.last_error = (
                 "Found the adapter over Bluetooth but the connection or config "
