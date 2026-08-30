@@ -3,12 +3,18 @@
 from __future__ import annotations
 
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from homeassistant.components import bluetooth
+from homeassistant.components.bluetooth import (
+    BluetoothChange,
+    BluetoothScanningMode,
+    BluetoothServiceInfoBleak,
+)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.util import dt as dt_util
 
 from blueretro_ble import BlueRetroDevice, BlueRetroState
 
@@ -24,7 +30,14 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
-    """Polls a BlueRetro adapter while it is idle/connectable."""
+    """Polls a BlueRetro adapter while it is idle/connectable.
+
+    Besides the periodic connect-and-read poll, it listens passively to the
+    adapter's advertisements. The firmware only advertises while no controller
+    is connected (it stops advertising when one connects and resumes when it
+    disconnects), so "advertisement gone" == "in use" and "advertisement back"
+    == "idle again" -- both without opening a connection.
+    """
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
         minutes = entry.options.get(
@@ -44,6 +57,61 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
         # Human-readable reason the adapter is unavailable, surfaced as an
         # attribute on the config-available sensor. ``None`` while reachable.
         self.last_error: str | None = None
+        # Passive advertisement tracking.
+        self.adv_name: str | None = None
+        self.rssi: int | None = None
+        self.last_seen: datetime | None = None
+        # True once HA reports the advertisement gone (controller connected,
+        # or powered off -- indistinguishable without a connection).
+        self.in_use: bool = False
+        info = bluetooth.async_last_service_info(
+            hass, self.address, connectable=False
+        )
+        if info is not None:
+            self._record(info)
+
+    @callback
+    def async_start(self) -> CALLBACK_TYPE:
+        """Subscribe to advertisement seen/gone events; returns the unsubscribe."""
+        unsub_seen = bluetooth.async_register_callback(
+            self.hass,
+            self._async_seen,
+            {"address": self.address, "connectable": False},
+            BluetoothScanningMode.PASSIVE,
+        )
+        unsub_gone = bluetooth.async_track_unavailable(
+            self.hass, self._async_gone, self.address, connectable=False
+        )
+
+        @callback
+        def _unsub() -> None:
+            unsub_seen()
+            unsub_gone()
+
+        return _unsub
+
+    def _record(self, info: BluetoothServiceInfoBleak) -> None:
+        self.adv_name = info.name
+        self.rssi = info.rssi
+        self.last_seen = dt_util.utcnow()
+
+    @callback
+    def _async_seen(
+        self, info: BluetoothServiceInfoBleak, change: BluetoothChange
+    ) -> None:
+        self._record(info)
+        was_in_use = self.in_use
+        self.in_use = False
+        if was_in_use:
+            # Idle again: the game/config may have changed, read it now instead
+            # of waiting for the next scheduled poll.
+            self.hass.async_create_task(self.async_request_refresh())
+        self.async_update_listeners()
+
+    @callback
+    def _async_gone(self, info: BluetoothServiceInfoBleak) -> None:
+        self.in_use = True
+        self.async_update_listeners()
 
     async def _async_update_data(self) -> BlueRetroState:
         ble_device = bluetooth.async_ble_device_from_address(

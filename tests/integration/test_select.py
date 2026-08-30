@@ -208,3 +208,25 @@ async def test_select_pairing_mode_writes_global_config(hass):
                 blocking=True,
             )
     mock_set.assert_awaited_once_with(ble_device, inquiry_mode="Manual")
+
+
+async def test_config_source_select_shows_label_and_writes(hass):
+    ble_device = AsyncMock()
+    state = BlueRetroState(available=True, cfg_src=0, config_source="Default")
+    with (
+        patch(BLE_ADDR, return_value=ble_device),
+        patch(UPDATE, AsyncMock(return_value=state)),
+    ):
+        await _setup(hass, ble_device, state)
+        assert hass.states.get("select.blueretro_config_source").state == "Default"
+        with patch(
+            "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_config_source",
+            AsyncMock(),
+        ) as mock_set:
+            await hass.services.async_call(
+                "select",
+                "select_option",
+                {"entity_id": "select.blueretro_config_source", "option": "Game ID"},
+                blocking=True,
+            )
+    mock_set.assert_awaited_once_with(ble_device, "Game ID")

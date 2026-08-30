@@ -54,3 +54,32 @@ set_input_mapping:
       required: true
       selector:
         object:
+
+list_presets:
+
+apply_preset:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+    preset:
+      required: true
+      example: n64_fps
+      selector:
+        text:
+    config_id:
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 16
+          mode: box
+    port:
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 11
+          mode: box

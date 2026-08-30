@@ -12,6 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from blueretro_ble import (
     ACCESSORY_CFG,
+    CFG_SRC,
     DEVICE_CFG,
     INQUIRY_MODE,
     MULTITAP_CFG,
@@ -92,6 +93,15 @@ def _port_value(
 
 
 GLOBAL_SELECTS: tuple[BlueRetroSelectDescription, ...] = (
+    BlueRetroSelectDescription(
+        key="config_source",
+        translation_key="config_source",
+        options=list(CFG_SRC),
+        current_fn=lambda s: s.config_source,
+        # "Game ID" saves the current config as the running game's file;
+        # "Default" deletes that file and reloads the default config.
+        set_fn=lambda device, ble, opt: device.async_set_config_source(ble, opt),
+    ),
     BlueRetroSelectDescription(
         key="memory_card_bank",
         translation_key="memory_card_bank",

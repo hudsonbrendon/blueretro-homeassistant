@@ -125,3 +125,43 @@ async def test_service_raises_when_unreachable(hass):
             {"device_id": device_id, "name": "GALE01"},
             blocking=True,
         )
+
+
+async def test_list_presets(hass):
+    with _connected(AsyncMock()):
+        await _setup(hass)
+        resp = await hass.services.async_call(
+            DOMAIN, "list_presets", {}, blocking=True, return_response=True
+        )
+    ids = [p["id"] for p in resp["presets"]]
+    assert "n64_fps" in ids
+    assert resp["presets"][0].keys() == {"id", "name", "console", "desc"}
+
+
+async def test_apply_preset(hass):
+    ble = AsyncMock()
+    with _connected(ble):
+        await _setup(hass)
+        with patch(f"{DEV}.async_apply_preset", AsyncMock()) as mock_apply:
+            await hass.services.async_call(
+                DOMAIN,
+                "apply_preset",
+                {"device_id": _device_id(hass), "preset": "n64_fps", "port": 1},
+                blocking=True,
+            )
+    mock_apply.assert_awaited_once()
+    args, kwargs = mock_apply.await_args
+    assert args[0] is ble
+    assert args[1].name and kwargs == {"cfg_id": 0, "port": 1}
+
+
+async def test_apply_unknown_preset_raises(hass):
+    with _connected(AsyncMock()):
+        await _setup(hass)
+        with pytest.raises(HomeAssistantError):
+            await hass.services.async_call(
+                DOMAIN,
+                "apply_preset",
+                {"device_id": _device_id(hass), "preset": "nope"},
+                blocking=True,
+            )

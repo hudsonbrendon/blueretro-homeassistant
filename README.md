@@ -29,15 +29,26 @@ automatically via `manifest.json` `requirements`.
   version, BD address, pairing mode, multitap, memory-card bank and firmware name.
 - 🟢 **Config available** — a connectivity `binary_sensor`, on while the adapter is
   idle and reachable.
+- 🎮 **Controller connected** — a passive `binary_sensor` that flips on when a
+  controller pairs and off when it disconnects, without ever connecting to the
+  adapter (the firmware only advertises while idle). Returning to idle also
+  triggers an immediate poll, so the game/config refresh right away.
+- 📶 **Signal strength** — RSSI diagnostic sensor from the advertisement
+  (disabled by default).
 - 🎛️ **Selects** — Controller mode (GamePad / GamePadAlt / Keyboard / Mouse) and
   Accessory (None / Memory / Rumble / Both) **per output port** (multitap), plus
-  Memory card bank, Multitap, System and Pairing mode (global config).
+  Memory card bank, Multitap, System, Pairing mode (global config) and
+  **Config source** (Default ↔ per-Game ID, like the web config's buttons).
+- 🗂️ **Presets** — the 35 input-mapping presets from the official web config ship
+  with the integration; apply one to a config slot with `blueretro.apply_preset`.
 - 🔁 **Buttons** — Reboot, Deep sleep and Factory reset.
 - ⬆️ **Firmware update** — an `update` entity that flags when a newer
   `darthcloud/BlueRetro` release exists and links to it (detection only; no OTA).
 - ⏱️ **Configurable** — tune the poll interval (1–60 minutes) and the number of
   output ports to expose (1–12, for multitap) from the integration's options.
 - 🌍 **Translations** — English, Portuguese (BR and PT) and Spanish.
+- 🏷️ **Named after the adapter** — devices take their advertised name
+  (`BlueRetro_DC_2A6E`, `BlueRetro_GC_106E`…), so several adapters stay apart.
 - 📡 **Works through ESPHome Bluetooth proxies** — uses Home Assistant's shared
   Bluetooth stack, so the adapter only needs to be near a proxy, not the HA host.
 
@@ -78,10 +89,11 @@ automatically via `manifest.json` `requirements`.
 
 | Type | Entity | Notes |
 |---|---|---|
-| `sensor` | Firmware, Game ID, Game, Config source | primary |
-| `sensor` | ABI version, BD address, Firmware name | diagnostic |
+| `sensor` | Firmware, Game ID, Game | primary |
+| `sensor` | ABI version, BD address, Firmware name, Signal strength | diagnostic (Signal strength disabled by default; passive RSSI) |
 | `binary_sensor` | Config available | connectivity (on while idle/reachable) |
-| `select` | Controller mode / Accessory (per port), Memory card bank, Multitap, System, Pairing mode | mode/accessory write the per-port output config; Memory card bank / Multitap / System / Pairing mode write the global config and reboot the adapter to apply |
+| `binary_sensor` | Controller connected | passive: on while the adapter stops advertising (controller connected — or powered off; see the `last_seen` attribute). Flips on within ~1 min, off immediately |
+| `select` | Controller mode / Accessory (per port), Memory card bank, Multitap, System, Pairing mode, Config source | mode/accessory write the per-port output config; Memory card bank / Multitap / System / Pairing mode write the global config and reboot the adapter to apply; Config source "Game ID" saves the current config as the running game's file, "Default" deletes it and reloads the default |
 | `button` | Reboot, Deep sleep, Factory reset | Factory reset restores original firmware/configuration |
 | `update` | Firmware | flags a newer GitHub release; detection only (no OTA install) |
 
@@ -100,6 +112,8 @@ Target a BlueRetro device:
 | `blueretro.delete_config_file` | Delete a stored per-GameID config file by name. |
 | `blueretro.get_input_mapping` | Read advanced input mappings for a config slot (returns a response). |
 | `blueretro.set_input_mapping` | Write advanced input mappings (src/dest/dest_id/max/threshold/deadzone/turbo/scaling/diag_scaling) to a slot. |
+| `blueretro.list_presets` | List the bundled input-mapping presets (id, name, console, description); returns a response. |
+| `blueretro.apply_preset` | Write a bundled preset (e.g. `n64_fps`, `gc_rogue_leader`) to a config slot, offsetting `dest_id` by `port`. |
 
 > **Not exposed:** memory-card (VMU) and N64 Controller Pak backup/restore and
 > OTA firmware install are implemented in `blueretro-ble` but need a high BLE MTU
@@ -116,8 +130,11 @@ library and is pulled in as a dependency.
 ## Limitations
 
 - The adapter's configuration is only reachable while **idle** (no controller
-  connected). During gameplay the entities show `unavailable` — by design, to
-  avoid interfering with play.
+  connected). During gameplay the config entities show `unavailable` — by
+  design, to avoid interfering with play. The passive **Controller connected**
+  and **Signal strength** entities keep working.
+- Upstream `darthcloud/BlueRetro` was archived in December 2025; v25.04 is the
+  final firmware, so the `update` entity is unlikely to ever flag anything.
 - Bluetooth LE allows **one client at a time** — don't run the BlueRetro web
   config while Home Assistant is connected.
 - **VMU (Dreamcast memory card) backup/restore is not provided** here: it needs a

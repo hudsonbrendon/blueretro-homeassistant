@@ -47,7 +47,6 @@ async def test_sensors_report_values(hass):
         hass.states.get("sensor.blueretro_game").state
         == "Super Smash Bros. Melee"
     )
-    assert hass.states.get("sensor.blueretro_config_source").state == "1"
     assert hass.states.get("sensor.blueretro_abi_version").state == "2"
     assert (
         hass.states.get("sensor.blueretro_bd_address").state
@@ -62,3 +61,12 @@ async def test_sensors_report_values(hass):
 async def test_sensors_unavailable_when_offline(hass):
     await _setup(hass, BlueRetroState(available=False))
     assert hass.states.get("sensor.blueretro_firmware").state == "unavailable"
+
+
+async def test_rssi_sensor_registered_but_disabled_by_default(hass):
+    from homeassistant.helpers import entity_registry as er
+
+    await _setup(hass, BlueRetroState(available=True))
+    entry = er.async_get(hass).async_get("sensor.blueretro_signal_strength")
+    assert entry is not None
+    assert entry.disabled_by is er.RegistryEntryDisabler.INTEGRATION
