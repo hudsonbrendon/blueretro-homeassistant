@@ -22,7 +22,8 @@ class BlueRetroEntity(CoordinatorEntity[BlueRetroCoordinator]):
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.address)},
             connections={("bluetooth", coordinator.address)},
-            name="BlueRetro",
+            # Advertised local name (e.g. "BlueRetro_DC_2A6E") tells adapters apart.
+            name=coordinator.adv_name or "BlueRetro",
             manufacturer="darthcloud",
             model=f"BlueRetro ({platform})" if platform else "BlueRetro",
             sw_version=sw_version,

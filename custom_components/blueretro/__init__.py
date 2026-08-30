@@ -27,6 +27,7 @@ async def async_setup_entry(
     coordinator = BlueRetroCoordinator(hass, entry)
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
+    entry.async_on_unload(coordinator.async_start())
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     async_setup_services(hass)

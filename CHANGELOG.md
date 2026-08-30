@@ -6,6 +6,28 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-08-30
+
+### Added
+- **Controller connected** binary sensor, derived passively from the adapter's
+  advertisement (the firmware only advertises while idle). No BLE connection
+  needed; on within HA's unavailable-tracking window (~1 min), off immediately.
+  When the adapter turns idle again the integration polls at once instead of
+  waiting for the next interval.
+- **Signal strength** (RSSI) diagnostic sensor, disabled by default.
+- **Config source** select (Default / Game ID) using firmware commands
+  `0x10`/`0x11`, mirroring the web config's buttons.
+- **Presets**: `blueretro.list_presets` and `blueretro.apply_preset` services
+  expose the 35 input-mapping presets bundled with `blueretro-ble` 0.8.0.
+- Devices are named after their advertised local name (e.g. `BlueRetro_DC_2A6E`).
+
+### Changed
+- The `Config source` **sensor** was replaced by the select above; the old
+  `sensor.*_config_source` entity becomes orphaned and can be removed.
+- Requires `blueretro-ble==0.8.0`.
+- Tests: the usb-monitor patch now works on both older and current Home
+  Assistant releases.
+
 ## [0.7.1] - 2026-05-29
 
 ### Fixed

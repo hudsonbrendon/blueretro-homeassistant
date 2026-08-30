@@ -6,7 +6,9 @@
         "description": "Deseja configurar {name}?"
       },
       "user": {
-        "data": { "address": "Dispositivo" }
+        "data": {
+          "address": "Dispositivo"
+        }
       }
     },
     "abort": {
@@ -31,34 +33,80 @@
   },
   "entity": {
     "sensor": {
-      "firmware": { "name": "Firmware" },
-      "game_id": { "name": "ID do jogo" },
-      "game": { "name": "Jogo" },
-      "config_source": { "name": "Origem da configuração" },
-      "abi_version": { "name": "Versão da ABI" },
-      "bd_address": { "name": "Endereço BD" },
-      "firmware_name": { "name": "Nome do firmware" }
+      "firmware": {
+        "name": "Firmware"
+      },
+      "game_id": {
+        "name": "ID do jogo"
+      },
+      "game": {
+        "name": "Jogo"
+      },
+      "abi_version": {
+        "name": "Versão da ABI"
+      },
+      "bd_address": {
+        "name": "Endereço BD"
+      },
+      "firmware_name": {
+        "name": "Nome do firmware"
+      },
+      "rssi": {
+        "name": "Intensidade do sinal"
+      }
     },
     "binary_sensor": {
-      "config_available": { "name": "Configuração disponível" }
+      "config_available": {
+        "name": "Configuração disponível"
+      },
+      "in_use": {
+        "name": "Controle conectado"
+      }
     },
     "button": {
-      "reboot": { "name": "Reiniciar" },
-      "deep_sleep": { "name": "Sono profundo" },
-      "factory_reset": { "name": "Restaurar de fábrica" }
+      "reboot": {
+        "name": "Reiniciar"
+      },
+      "deep_sleep": {
+        "name": "Sono profundo"
+      },
+      "factory_reset": {
+        "name": "Restaurar de fábrica"
+      }
     },
     "select": {
-      "controller_mode": { "name": "Modo do controle" },
-      "accessory": { "name": "Acessório" },
-      "controller_mode_port": { "name": "Modo do controle (porta {port})" },
-      "accessory_port": { "name": "Acessório (porta {port})" },
-      "memory_card_bank": { "name": "Banco do cartão de memória" },
-      "multitap": { "name": "Multitap" },
-      "system": { "name": "Sistema" },
-      "inquiry_mode": { "name": "Modo de pareamento" }
+      "controller_mode": {
+        "name": "Modo do controle"
+      },
+      "accessory": {
+        "name": "Acessório"
+      },
+      "controller_mode_port": {
+        "name": "Modo do controle (porta {port})"
+      },
+      "accessory_port": {
+        "name": "Acessório (porta {port})"
+      },
+      "memory_card_bank": {
+        "name": "Banco do cartão de memória"
+      },
+      "multitap": {
+        "name": "Multitap"
+      },
+      "system": {
+        "name": "Sistema"
+      },
+      "inquiry_mode": {
+        "name": "Modo de pareamento"
+      },
+      "config_source": {
+        "name": "Origem da configuração"
+      }
     },
     "update": {
-      "firmware": { "name": "Firmware" }
+      "firmware": {
+        "name": "Firmware"
+      }
     }
   },
   "services": {
@@ -66,32 +114,82 @@
       "name": "Listar arquivos de configuração",
       "description": "Lista os arquivos de configuração por GameID guardados no adaptador.",
       "fields": {
-        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." }
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        }
       }
     },
     "delete_config_file": {
       "name": "Excluir arquivo de configuração",
       "description": "Exclui um arquivo de configuração por GameID guardado.",
       "fields": {
-        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
-        "name": { "name": "Nome do arquivo", "description": "O nome do arquivo (GameID bruto)." }
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        },
+        "name": {
+          "name": "Nome do arquivo",
+          "description": "O nome do arquivo (GameID bruto)."
+        }
       }
     },
     "get_input_mapping": {
       "name": "Ler mapeamento de entrada",
       "description": "Lê os mapeamentos avançados de entrada de um slot de configuração.",
       "fields": {
-        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
-        "config_id": { "name": "Slot de configuração", "description": "Índice do slot de configuração de entrada." }
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        },
+        "config_id": {
+          "name": "Slot de configuração",
+          "description": "Índice do slot de configuração de entrada."
+        }
       }
     },
     "set_input_mapping": {
       "name": "Definir mapeamento de entrada",
       "description": "Grava mapeamentos avançados de entrada em um slot de configuração.",
       "fields": {
-        "device_id": { "name": "Dispositivo", "description": "O adaptador BlueRetro." },
-        "config_id": { "name": "Slot de configuração", "description": "Índice do slot de configuração de entrada." },
-        "mappings": { "name": "Mapeamentos", "description": "Lista de entradas (src, dest, dest_id, max, threshold, deadzone, turbo, scaling, diag_scaling)." }
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        },
+        "config_id": {
+          "name": "Slot de configuração",
+          "description": "Índice do slot de configuração de entrada."
+        },
+        "mappings": {
+          "name": "Mapeamentos",
+          "description": "Lista de entradas (src, dest, dest_id, max, threshold, deadzone, turbo, scaling, diag_scaling)."
+        }
+      }
+    },
+    "list_presets": {
+      "name": "Listar presets",
+      "description": "Lista os presets de mapeamento embutidos (id, nome, console, descrição)."
+    },
+    "apply_preset": {
+      "name": "Aplicar preset",
+      "description": "Grava um dos presets de mapeamento do BlueRetroWebCfg em um slot de configuração.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        },
+        "preset": {
+          "name": "Preset",
+          "description": "Id do preset, ex. n64_fps (veja Listar presets)."
+        },
+        "config_id": {
+          "name": "Slot de configuração",
+          "description": "Índice do slot de configuração de entrada."
+        },
+        "port": {
+          "name": "Porta",
+          "description": "Porta de saída alvo do preset (0 = primeira)."
+        }
       }
     }
   }

@@ -39,10 +39,15 @@ def mock_usb_setup():
     down the bluetooth -> bluetooth_adapters -> blueretro chain. Stub only the
     monitor start so usb setup still registers its data (which bluetooth reads).
     """
-    with patch(
-        "homeassistant.components.usb.USBDiscovery._async_start_monitor",
-        AsyncMock(return_value=None),
-    ):
+    from homeassistant.components.usb import USBDiscovery
+
+    # Renamed across HA releases (pyudev monitor -> aiousbwatcher).
+    name = next(
+        n
+        for n in ("_async_start_aiousbwatcher", "_async_start_monitor")
+        if hasattr(USBDiscovery, n)
+    )
+    with patch.object(USBDiscovery, name, AsyncMock(return_value=None)):
         yield
 
 

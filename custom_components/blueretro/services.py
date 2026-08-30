@@ -20,7 +20,7 @@ from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import config_validation as cv, device_registry as dr
 import voluptuous as vol
 
-from blueretro_ble import InputMapping
+from blueretro_ble import InputMapping, list_presets, load_preset
 
 from .const import DOMAIN
 
@@ -31,11 +31,15 @@ SERVICE_LIST_FILES = "list_config_files"
 SERVICE_DELETE_FILE = "delete_config_file"
 SERVICE_GET_MAPPING = "get_input_mapping"
 SERVICE_SET_MAPPING = "set_input_mapping"
+SERVICE_LIST_PRESETS = "list_presets"
+SERVICE_APPLY_PRESET = "apply_preset"
 
 ATTR_DEVICE_ID = "device_id"
 ATTR_NAME = "name"
 ATTR_CONFIG_ID = "config_id"
 ATTR_MAPPINGS = "mappings"
+ATTR_PRESET = "preset"
+ATTR_PORT = "port"
 
 _MAPPING_SCHEMA = vol.Schema(
     {
@@ -106,6 +110,54 @@ def async_setup_services(hass: HomeAssistant) -> None:
             _ble(coordinator), call.data[ATTR_CONFIG_ID], mappings
         )
 
+    async def presets(call: ServiceCall) -> ServiceResponse:
+        out = []
+        for pid in list_presets():
+            p = load_preset(pid)
+            out.append(
+                {"id": pid, "name": p.name, "console": p.console, "desc": p.desc}
+            )
+        return {"presets": out}
+
+    async def apply_preset(call: ServiceCall) -> None:
+        coordinator = _coordinator(hass, call)
+        try:
+            preset = load_preset(call.data[ATTR_PRESET])
+        except KeyError as err:
+            raise HomeAssistantError(
+                f"Unknown preset {call.data[ATTR_PRESET]!r}; see list_presets"
+            ) from err
+        await coordinator.device.async_apply_preset(
+            _ble(coordinator),
+            preset,
+            cfg_id=call.data[ATTR_CONFIG_ID],
+            port=call.data[ATTR_PORT],
+        )
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_LIST_PRESETS,
+        presets,
+        schema=vol.Schema({}),
+        supports_response=SupportsResponse.ONLY,
+    )
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_APPLY_PRESET,
+        apply_preset,
+        schema=vol.Schema(
+            {
+                **_DEVICE,
+                vol.Required(ATTR_PRESET): cv.string,
+                vol.Optional(ATTR_CONFIG_ID, default=0): vol.All(
+                    int, vol.Range(min=0)
+                ),
+                vol.Optional(ATTR_PORT, default=0): vol.All(
+                    int, vol.Range(min=0, max=11)
+                ),
+            }
+        ),
+    )
     hass.services.async_register(
         DOMAIN,
         SERVICE_LIST_FILES,
