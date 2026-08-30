@@ -5,7 +5,9 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import entity_registry as er
 
+from .const import DOMAIN
 from .coordinator import BlueRetroCoordinator
 from .services import async_setup_services
 
@@ -24,6 +26,12 @@ async def async_setup_entry(
     hass: HomeAssistant, entry: BlueRetroConfigEntry
 ) -> bool:
     """Set up BlueRetro from a config entry."""
+    # 0.8.0 replaced the config-source sensor with a select; drop the orphan.
+    ent_reg = er.async_get(hass)
+    if stale := ent_reg.async_get_entity_id(
+        "sensor", DOMAIN, f"{entry.unique_id}_config_source"
+    ):
+        ent_reg.async_remove(stale)
     coordinator = BlueRetroCoordinator(hass, entry)
     await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator

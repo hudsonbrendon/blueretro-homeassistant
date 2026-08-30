@@ -30,7 +30,7 @@ def test_parse_firmware_empty():
 
 
 async def test_device_info_split_from_firmware(hass):
-    entry = MockConfigEntry(domain=DOMAIN, unique_id="AA:BB:CC:DD:EE:FF", data={})
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id="AA:BB:CC:DD:EE:FF", data={})
     entry.add_to_hass(hass)
     state = BlueRetroState(available=True, fw_version="v24.04 hw1 playstation")
     with (

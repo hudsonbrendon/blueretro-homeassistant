@@ -15,8 +15,7 @@ SET_OUTPUT = "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_
 
 
 async def _setup(hass, ble_device, state, options=None):
-    entry = MockConfigEntry(
-        domain=DOMAIN, unique_id=ADDR, data={}, options=options or {}
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id=ADDR, data={}, options=options or {}
     )
     entry.add_to_hass(hass)
     with (

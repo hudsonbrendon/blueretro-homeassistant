@@ -15,7 +15,7 @@ from homeassistant.const import SIGNAL_STRENGTH_DECIBELS_MILLIWATT, EntityCatego
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from blueretro_ble import BlueRetroState
+from blueretro_ble import SYSTEM_CFG, BlueRetroState
 
 from . import BlueRetroConfigEntry
 from .entity import BlueRetroEntity
@@ -42,7 +42,9 @@ SENSORS: tuple[BlueRetroSensorDescription, ...] = (
     BlueRetroSensorDescription(
         key="game",
         translation_key="game",
-        value_fn=lambda s: s.game_name,
+        # Firmware reports the system name (e.g. "GC") as the game id while
+        # no game is running; that is not a game, so show unknown.
+        value_fn=lambda s: None if not _game_running(s) else s.game_name,
     ),
     BlueRetroSensorDescription(
         key="abi_version",
@@ -63,6 +65,11 @@ SENSORS: tuple[BlueRetroSensorDescription, ...] = (
         value_fn=lambda s: s.fw_name,
     ),
 )
+
+
+def _game_running(state: BlueRetroState) -> bool:
+    """True when the reported game id is a real game, not the system name."""
+    return bool(state.game_id) and state.game_id not in SYSTEM_CFG
 
 
 async def async_setup_entry(
@@ -95,6 +102,12 @@ class BlueRetroSensor(BlueRetroEntity, SensorEntity):
         if self.coordinator.data is None:
             return None
         return self.entity_description.value_fn(self.coordinator.data)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, bool] | None:
+        if self.entity_description.key != "game" or self.coordinator.data is None:
+            return None
+        return {"game_running": _game_running(self.coordinator.data)}
 
 
 class BlueRetroRssiSensor(BlueRetroEntity, SensorEntity):
