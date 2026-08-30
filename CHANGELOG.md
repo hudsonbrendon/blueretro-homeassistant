@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-08-30
+
+### Fixed
+- Devices are now named from the config entry title (the advertised name
+  captured at discovery, e.g. `BlueRetro_N64_8756`) whenever the adapter is not
+  advertising at setup time — previously every adapter that was powered off
+  when Home Assistant started was called plain "BlueRetro".
+- The orphaned `Config source` **sensor** left behind by 0.8.0 is removed from
+  the entity registry automatically on setup.
+
+### Added
+- `game_running` attribute on the Game sensor. While no game runs the firmware
+  reports the system name (e.g. `GC`) as the game id; the Game sensor now shows
+  unknown in that case instead of pretending to look it up.
+
 ## [0.8.0] - 2026-08-30
 
 ### Added

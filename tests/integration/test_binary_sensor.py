@@ -7,7 +7,7 @@ from custom_components.blueretro.const import DOMAIN
 
 
 async def _setup(hass, state):
-    entry = MockConfigEntry(domain=DOMAIN, unique_id="AA:BB:CC:DD:EE:FF", data={})
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id="AA:BB:CC:DD:EE:FF", data={})
     entry.add_to_hass(hass)
     with (
         patch(
@@ -52,7 +52,7 @@ async def test_reason_when_connect_or_read_failed(hass):
 
 async def test_reason_when_no_connectable_path(hass):
     """No connectable BLEDevice -> the BLE-path message; library never called."""
-    entry = MockConfigEntry(domain=DOMAIN, unique_id="AA:BB:CC:DD:EE:FF", data={})
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id="AA:BB:CC:DD:EE:FF", data={})
     entry.add_to_hass(hass)
     update = AsyncMock()
     with (

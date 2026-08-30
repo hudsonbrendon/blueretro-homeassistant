@@ -72,7 +72,7 @@ async def test_bluetooth_discovery_rejects_non_blueretro(hass):
 
 
 async def test_options_flow_sets_scan_interval(hass):
-    entry = MockConfigEntry(domain=DOMAIN, unique_id=ADDRESS, data={})
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id=ADDRESS, data={})
     entry.add_to_hass(hass)
     # Patch the integration setup so the options flow can be exercised without
     # bringing up the BLE coordinator.

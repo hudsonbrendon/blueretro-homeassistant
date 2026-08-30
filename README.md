@@ -89,7 +89,7 @@ automatically via `manifest.json` `requirements`.
 
 | Type | Entity | Notes |
 |---|---|---|
-| `sensor` | Firmware, Game ID, Game | primary |
+| `sensor` | Firmware, Game ID, Game | primary (Game carries a `game_running` attribute; while the console idles the firmware reports the system name as the ID) |
 | `sensor` | ABI version, BD address, Firmware name, Signal strength | diagnostic (Signal strength disabled by default; passive RSSI) |
 | `binary_sensor` | Config available | connectivity (on while idle/reachable) |
 | `binary_sensor` | Controller connected | passive: on while the adapter stops advertising (controller connected — or powered off; see the `last_seen` attribute). Flips on within ~1 min, off immediately |

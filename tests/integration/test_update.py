@@ -28,8 +28,7 @@ def _github_session(tag: str = "v9.9.9", status: int = 200) -> MagicMock:
 
 
 async def _setup(hass, fw_version: str) -> MockConfigEntry:
-    entry = MockConfigEntry(
-        domain=DOMAIN, unique_id="AA:BB:CC:DD:EE:FF", data={}
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id="AA:BB:CC:DD:EE:FF", data={}
     )
     entry.add_to_hass(hass)
     state = BlueRetroState(available=True, fw_version=fw_version)

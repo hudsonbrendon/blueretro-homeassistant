@@ -26,7 +26,7 @@ def _connected(ble_device):
 
 
 async def _setup(hass):
-    entry = MockConfigEntry(domain=DOMAIN, unique_id=ADDR, data={})
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id=ADDR, data={})
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()

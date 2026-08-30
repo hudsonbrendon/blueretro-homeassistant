@@ -50,6 +50,8 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
             update_interval=timedelta(minutes=minutes),
         )
         self.address: str = entry.unique_id
+        # Entry title is the advertised local name captured at discovery.
+        self.title: str | None = entry.title
         self.output_ports: int = entry.options.get(
             CONF_OUTPUT_PORTS, DEFAULT_OUTPUT_PORTS
         )

@@ -7,7 +7,7 @@ from custom_components.blueretro.const import DOMAIN
 
 
 async def _setup(hass, state):
-    entry = MockConfigEntry(domain=DOMAIN, unique_id="AA:BB:CC:DD:EE:FF", data={})
+    entry = MockConfigEntry(domain=DOMAIN, title="BlueRetro", unique_id="AA:BB:CC:DD:EE:FF", data={})
     entry.add_to_hass(hass)
     with (
         patch(
@@ -70,3 +70,17 @@ async def test_rssi_sensor_registered_but_disabled_by_default(hass):
     entry = er.async_get(hass).async_get("sensor.blueretro_signal_strength")
     assert entry is not None
     assert entry.disabled_by is er.RegistryEntryDisabler.INTEGRATION
+
+
+async def test_game_unknown_when_id_is_system_name(hass):
+    await _setup(hass, BlueRetroState(available=True, game_id="GC", game_name=None))
+    state = hass.states.get("sensor.blueretro_game")
+    assert state.state == "unknown"
+    assert state.attributes["game_running"] is False
+
+
+async def test_game_running_attribute_true_for_real_game(hass):
+    await _setup(hass, BlueRetroState(available=True, game_id="50113E2F4C491FDC", game_name="Melee"))
+    state = hass.states.get("sensor.blueretro_game")
+    assert state.state == "Melee"
+    assert state.attributes["game_running"] is True
