@@ -37,7 +37,7 @@ async def _setup(hass, fw_version: str) -> MockConfigEntry:
         patch(UPDATE, AsyncMock(return_value=state)),
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
     return entry
 
 
@@ -45,7 +45,7 @@ async def test_update_available_when_github_newer(hass):
     with patch(SESSION, return_value=_github_session("v9.9.9")):
         await _setup(hass, "v1.8.1_master_dc_0c5d35d")
         await async_update_entity(hass, ENTITY)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
     state = hass.states.get(ENTITY)
     assert state is not None
     assert state.attributes["installed_version"] == "1.8.1"
@@ -58,7 +58,7 @@ async def test_no_false_update_when_github_unreachable(hass):
     with patch(SESSION, return_value=_github_session(status=500)):
         await _setup(hass, "v1.8.1_master_dc_0c5d35d")
         await async_update_entity(hass, ENTITY)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
     state = hass.states.get(ENTITY)
     assert state is not None
     assert state.attributes["latest_version"] == "1.8.1"

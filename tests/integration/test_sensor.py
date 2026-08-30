@@ -20,7 +20,7 @@ async def _setup(hass, state):
         ),
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
     return entry
 
 

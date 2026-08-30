@@ -44,7 +44,7 @@ async def test_device_info_split_from_firmware(hass):
         ),
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
 
     device = dr.async_get(hass).async_get_device(
         identifiers={(DOMAIN, "AA:BB:CC:DD:EE:FF")}

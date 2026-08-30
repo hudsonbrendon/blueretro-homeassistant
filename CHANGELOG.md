@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-08-30
+
+### Fixed
+- **Setup no longer blocks on Bluetooth.** The first poll used to run inside
+  `async_setup_entry`; with several adapters (or BlueZ holding a stale link)
+  the connect could take minutes and Home Assistant cancelled the entry at boot
+  (`Bootstrap stage 2 timeout` → entry in `setup_error`, no entities). The
+  first poll now runs in the background and entities stay unavailable until
+  it lands.
+- Each poll is bounded by a 120 s timeout; on timeout the `Config available`
+  `reason` attribute says so instead of the poll hanging.
+- Device registry is kept in sync after setup: advertised name, firmware
+  (`sw_version`/`hw_version`) and model are pushed when they arrive — devices
+  get renamed on the first advertisement even if they were off at startup.
+
 ## [0.8.1] - 2026-08-30
 
 ### Fixed

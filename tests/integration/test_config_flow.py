@@ -80,7 +80,7 @@ async def test_options_flow_sets_scan_interval(hass):
         "custom_components.blueretro.async_setup_entry", return_value=True
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
-        await hass.async_block_till_done()
+        await hass.async_block_till_done(wait_background_tasks=True)
 
         result = await hass.config_entries.options.async_init(entry.entry_id)
         assert result["type"] is FlowResultType.FORM

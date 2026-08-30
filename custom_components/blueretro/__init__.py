@@ -33,10 +33,16 @@ async def async_setup_entry(
     ):
         ent_reg.async_remove(stale)
     coordinator = BlueRetroCoordinator(hass, entry)
-    await coordinator.async_config_entry_first_refresh()
     entry.runtime_data = coordinator
     entry.async_on_unload(coordinator.async_start())
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    # Never block setup on a BLE connection: with several adapters (and BlueZ
+    # sometimes holding a stale link) the first connect can take minutes and
+    # Home Assistant cancels slow setups at boot. Poll in the background;
+    # entities stay unavailable until the first read lands.
+    entry.async_create_background_task(
+        hass, coordinator.async_refresh(), "blueretro-first-refresh", eager_start=True
+    )
     entry.async_on_unload(entry.add_update_listener(_async_update_listener))
     async_setup_services(hass)
     return True
