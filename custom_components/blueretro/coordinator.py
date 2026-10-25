@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth import (
+    MONOTONIC_TIME,
     BluetoothChange,
     BluetoothScanningMode,
     BluetoothServiceInfoBleak,
@@ -15,6 +16,7 @@ from homeassistant.components.bluetooth import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import dt as dt_util
 
@@ -33,6 +35,19 @@ _LOGGER = logging.getLogger(__name__)
 # Upper bound for one connect-and-read; bleak-retry-connector's own retries
 # and backoff can otherwise pin a poll for many minutes.
 POLL_TIMEOUT = 120
+
+# The firmware advertises every 100 ms while idle and stops the moment a
+# Bluetooth controller connects (hci.c). Measured on a real adapter, HA's last
+# advertisement timestamp stayed under 1.5 s old while idle; 30 s leaves room
+# for scanner/proxy hiccups. HA's own unavailable tracking needs up to ~15 min
+# for a passive device.
+IN_USE_AFTER = 30  # seconds without an advertisement
+PRESENCE_CHECK = timedelta(seconds=15)
+
+REASON_IN_USE = (
+    "A controller is connected. The adapter stops advertising and its "
+    "config interface is unreachable until the controller disconnects."
+)
 
 
 class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
@@ -56,6 +71,7 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
             update_interval=timedelta(minutes=minutes),
         )
         self.address: str = entry.unique_id
+        self.entry_id: str = entry.entry_id
         # Entry title is the advertised local name captured at discovery.
         self.title: str | None = entry.title
         self.output_ports: int = entry.options.get(
@@ -72,6 +88,8 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
         # True once HA reports the advertisement gone (controller connected,
         # or powered off -- indistinguishable without a connection).
         self.in_use: bool = False
+        # Serialises BLE sessions (poll vs. long memory-card transfers).
+        self.lock = asyncio.Lock()
         info = bluetooth.async_last_service_info(
             hass, self.address, connectable=False
         )
@@ -90,18 +108,54 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
         unsub_gone = bluetooth.async_track_unavailable(
             self.hass, self._async_gone, self.address, connectable=False
         )
+        unsub_check = async_track_time_interval(
+            self.hass, self._async_check_presence, PRESENCE_CHECK
+        )
 
         @callback
         def _unsub() -> None:
             unsub_seen()
             unsub_gone()
+            unsub_check()
 
         return _unsub
 
     def _record(self, info: BluetoothServiceInfoBleak) -> None:
         self.adv_name = info.name
         self.rssi = info.rssi
-        self.last_seen = dt_util.utcnow()
+        age = max(0.0, MONOTONIC_TIME() - info.time)
+        self.last_seen = dt_util.utcnow() - timedelta(seconds=age)
+
+    @callback
+    def _async_set_in_use(self, in_use: bool) -> None:
+        if in_use == self.in_use:
+            return
+        self.in_use = in_use
+        if not in_use:
+            # Idle again: the game/config may have changed, read it now instead
+            # of waiting for the next scheduled poll.
+            self.hass.async_create_task(self.async_request_refresh())
+        self.async_update_listeners()
+
+    @callback
+    def _async_check_presence(self, _now: datetime | None = None) -> None:
+        """Flag in-use from the age of the last advertisement HA received.
+
+        Advertisement callbacks are de-duplicated, so a resumed but unchanged
+        advertisement never fires one; poll the history timestamp instead.
+        """
+        if self.lock.locked():
+            # Our own config session also stops the advertising.
+            return
+        info = bluetooth.async_last_service_info(
+            self.hass, self.address, connectable=False
+        )
+        if info is None:
+            # Dropped from HA's history: gone for longer than its own timeout.
+            self._async_set_in_use(self.last_seen is not None)
+            return
+        self._record(info)
+        self._async_set_in_use(MONOTONIC_TIME() - info.time > IN_USE_AFTER)
 
     @callback
     def _async_sync_device(self, state: BlueRetroState | None = None) -> None:
@@ -113,7 +167,11 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
         name; a user rename (``name_by_user``) is untouched.
         """
         reg = dr.async_get(self.hass)
-        device = reg.async_get_device(identifiers={(DOMAIN, self.address)})
+        # async_get_device is deprecated (removed in HA 2027.8).
+        if get := getattr(reg, "async_get_device_by_identifier", None):
+            device = get((DOMAIN, self.address), self.entry_id)
+        else:
+            device = reg.async_get_device(identifiers={(DOMAIN, self.address)})
         if device is None:
             return
         changes: dict[str, str] = {}
@@ -134,20 +192,27 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
     ) -> None:
         self._record(info)
         self._async_sync_device()
-        was_in_use = self.in_use
-        self.in_use = False
-        if was_in_use:
-            # Idle again: the game/config may have changed, read it now instead
-            # of waiting for the next scheduled poll.
-            self.hass.async_create_task(self.async_request_refresh())
-        self.async_update_listeners()
+        if self.in_use:
+            self._async_set_in_use(False)
+        else:
+            self.async_update_listeners()
 
     @callback
     def _async_gone(self, info: BluetoothServiceInfoBleak) -> None:
-        self.in_use = True
-        self.async_update_listeners()
+        self._async_set_in_use(True)
 
     async def _async_update_data(self) -> BlueRetroState:
+        if self.in_use:
+            # Connecting would only burn a proxy slot and up to POLL_TIMEOUT.
+            self.last_error = REASON_IN_USE
+            return BlueRetroState(available=False)
+        if self.lock.locked():
+            # A memory-card transfer owns the link; keep the last reading.
+            return self.data or BlueRetroState(available=False)
+        async with self.lock:
+            return await self._async_poll()
+
+    async def _async_poll(self) -> BlueRetroState:
         ble_device = bluetooth.async_ble_device_from_address(
             self.hass, self.address, connectable=True
         )

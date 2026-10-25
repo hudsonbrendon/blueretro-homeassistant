@@ -53,6 +53,9 @@
       },
       "rssi": {
         "name": "Intensidade do sinal"
+      },
+      "vmu_free_blocks": {
+        "name": "Blocos livres no VMU"
       }
     },
     "binary_sensor": {
@@ -190,6 +193,68 @@
           "name": "Porta",
           "description": "Porta de saída alvo do preset (0 = primeira)."
         }
+      }
+    },
+    "backup_memory_card": {
+      "name": "Cópia do cartão de memória",
+      "description": "Transfere o VMU emulado do Dreamcast (128 KiB) ou um banco do Controller Pak do N64 (32 KiB) para /media/blueretro. O adaptador precisa estar ocioso (sem comando conectado). Retorna o caminho salvo.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        },
+        "card": {
+          "name": "Cartão",
+          "description": "vmu (Dreamcast) ou controller_pak (N64). Deduzido do firmware do adaptador quando vazio."
+        },
+        "bank": {
+          "name": "Banco",
+          "description": "Banco do Controller Pak 1-4 (só N64)."
+        }
+      }
+    },
+    "restore_memory_card": {
+      "name": "Restaurar cartão de memória",
+      "description": "Sobrescreve o VMU emulado ou um banco do Controller Pak com um arquivo de imagem. Destrutivo: faça uma cópia antes e deixe o console no menu.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        },
+        "path": {
+          "name": "Arquivo",
+          "description": "Imagem a enviar; precisa estar numa pasta liberada, como /media."
+        },
+        "card": {
+          "name": "Cartão",
+          "description": "vmu (Dreamcast) ou controller_pak (N64). Deduzido do firmware do adaptador quando vazio."
+        },
+        "bank": {
+          "name": "Banco",
+          "description": "Banco do Controller Pak 1-4 (só N64)."
+        }
+      }
+    },
+    "format_controller_pak": {
+      "name": "Formatar Controller Pak",
+      "description": "Apaga um banco do Controller Pak do N64 com uma imagem formatada em branco. Destrutivo.",
+      "fields": {
+        "device_id": {
+          "name": "Dispositivo",
+          "description": "O adaptador BlueRetro."
+        },
+        "bank": {
+          "name": "Banco",
+          "description": "Banco do Controller Pak 1-4 (só N64)."
+        }
+      }
+    }
+  },
+  "selector": {
+    "card": {
+      "options": {
+        "vmu": "VMU do Dreamcast",
+        "controller_pak": "Controller Pak do N64"
       }
     }
   }

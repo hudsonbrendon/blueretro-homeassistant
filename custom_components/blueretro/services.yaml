@@ -83,3 +83,67 @@ apply_preset:
           min: 0
           max: 11
           mode: box
+
+backup_memory_card:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+    card:
+      selector:
+        select:
+          translation_key: card
+          options:
+            - vmu
+            - controller_pak
+    bank:
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 4
+          mode: box
+
+restore_memory_card:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+    path:
+      required: true
+      example: /media/blueretro/BlueRetro_DC_2A6E_20261025-150000.vmu
+      selector:
+        text:
+    card:
+      selector:
+        select:
+          translation_key: card
+          options:
+            - vmu
+            - controller_pak
+    bank:
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 4
+          mode: box
+
+format_controller_pak:
+  fields:
+    device_id:
+      required: true
+      selector:
+        device:
+          integration: blueretro
+    bank:
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 4
+          mode: box

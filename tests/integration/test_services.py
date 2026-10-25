@@ -165,3 +165,83 @@ async def test_apply_unknown_preset_raises(hass):
                 {"device_id": _device_id(hass), "preset": "nope"},
                 blocking=True,
             )
+
+
+@contextmanager
+def _platform(fw):
+    with (
+        patch(BLE_ADDR, return_value=AsyncMock()),
+        patch(UPDATE, AsyncMock(return_value=BlueRetroState(available=True, fw_version=fw))),
+        patch("custom_components.blueretro.services.FLUSH_SECONDS", 0),
+    ):
+        yield
+
+
+async def test_backup_vmu_inferred_from_dreamcast_firmware(hass, tmp_path):
+    hass.config.media_dirs = {"local": str(tmp_path)}
+    image = bytes(range(256)) * 512
+    with _platform("v25.04 hw1 dreamcast"):
+        await _setup(hass)
+        with patch(f"{DEV}.async_read_vmu", AsyncMock(return_value=image)):
+            resp = await hass.services.async_call(
+                DOMAIN,
+                "backup_memory_card",
+                {"device_id": _device_id(hass)},
+                blocking=True,
+                return_response=True,
+            )
+    assert resp["size"] == 128 * 1024
+    assert resp["path"].startswith(str(tmp_path / DOMAIN)) and resp["path"].endswith(".vmu")
+    with open(resp["path"], "rb") as f:
+        assert f.read() == image
+
+
+async def test_restore_pak_bank_validates_size(hass, tmp_path):
+    hass.config.allowlist_external_dirs = {str(tmp_path)}
+    good, bad = tmp_path / "good.mpk", tmp_path / "bad.mpk"
+    good.write_bytes(b"\x01" * 32 * 1024)
+    bad.write_bytes(b"\x01" * 100)
+    with _platform("v25.04 hw1 n64"):
+        await _setup(hass)
+        with patch(f"{DEV}.async_write_pak", AsyncMock()) as write:
+            with pytest.raises(HomeAssistantError, match="100 bytes"):
+                await hass.services.async_call(
+                    DOMAIN,
+                    "restore_memory_card",
+                    {"device_id": _device_id(hass), "path": str(bad)},
+                    blocking=True,
+                )
+            await hass.services.async_call(
+                DOMAIN,
+                "restore_memory_card",
+                {"device_id": _device_id(hass), "path": str(good), "bank": 3},
+                blocking=True,
+            )
+    write.assert_awaited_once()
+    assert write.await_args.args[1] == 2  # bank 3 -> index 2
+
+
+async def test_restore_rejects_path_outside_allowlist(hass, tmp_path):
+    hass.config.allowlist_external_dirs = set()
+    with _platform("v25.04 hw1 dreamcast"):
+        await _setup(hass)
+        with pytest.raises(HomeAssistantError, match="allowlist"):
+            await hass.services.async_call(
+                DOMAIN,
+                "restore_memory_card",
+                {"device_id": _device_id(hass), "path": str(tmp_path / "x.vmu")},
+                blocking=True,
+            )
+
+
+async def test_backup_needs_card_type_on_unknown_platform(hass):
+    with _platform("v25.04 hw1 gamecube"):
+        await _setup(hass)
+        with pytest.raises(HomeAssistantError, match="set `card`"):
+            await hass.services.async_call(
+                DOMAIN,
+                "backup_memory_card",
+                {"device_id": _device_id(hass)},
+                blocking=True,
+                return_response=True,
+            )
