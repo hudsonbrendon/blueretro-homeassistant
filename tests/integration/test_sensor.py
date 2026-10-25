@@ -84,3 +84,46 @@ async def test_game_running_attribute_true_for_real_game(hass):
     state = hass.states.get("sensor.blueretro_game")
     assert state.state == "Melee"
     assert state.attributes["game_running"] is True
+
+
+async def test_vmu_sensor_lists_saves_on_dreamcast(hass):
+    from datetime import datetime
+
+    from blueretro_ble import VmuSave
+
+    entry = MockConfigEntry(
+        domain=DOMAIN, title="BlueRetro_DC_2A6E", unique_id="AA:BB:CC:DD:EE:FF", data={}
+    )
+    entry.add_to_hass(hass)
+    state = BlueRetroState(
+        available=True,
+        fw_version="v25.04 hw1 dreamcast",
+        vmu_free_blocks=150,
+        vmu_saves=[VmuSave("SONICADV_INT", "data", 10, datetime(1998, 11, 27, 0, 1, 49))],
+    )
+    with (
+        patch(
+            "custom_components.blueretro.coordinator.bluetooth.async_ble_device_from_address",
+            return_value=AsyncMock(),
+        ),
+        patch(
+            "custom_components.blueretro.coordinator.BlueRetroDevice.async_update",
+            AsyncMock(return_value=state),
+        ),
+    ):
+        assert await hass.config_entries.async_setup(entry.entry_id)
+        await hass.async_block_till_done(wait_background_tasks=True)
+    sensor = hass.states.get("sensor.blueretro_dc_2a6e_vmu_free_blocks")
+    assert sensor.state == "150"
+    assert sensor.attributes["save_count"] == 1
+    assert sensor.attributes["saves"][0] == {
+        "name": "SONICADV_INT",
+        "kind": "data",
+        "blocks": 10,
+        "saved": "1998-11-27T00:01:49",
+    }
+
+
+async def test_no_vmu_sensor_on_other_consoles(hass):
+    await _setup(hass, BlueRetroState(available=True))
+    assert not [s for s in hass.states.async_entity_ids("sensor") if "vmu" in s]

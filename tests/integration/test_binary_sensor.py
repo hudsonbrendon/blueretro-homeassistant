@@ -1,9 +1,11 @@
 from unittest.mock import AsyncMock, patch
 
+from homeassistant.components.bluetooth import MONOTONIC_TIME
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from blueretro_ble import BlueRetroState
 from custom_components.blueretro.const import DOMAIN
+from custom_components.blueretro.coordinator import IN_USE_AFTER, REASON_IN_USE
 
 
 async def _setup(hass, state):
@@ -73,12 +75,13 @@ async def test_reason_when_no_connectable_path(hass):
     update.assert_not_called()
 
 
-def _adv(rssi=-60, name="BlueRetro_DC_2A6E"):
+def _adv(rssi=-60, name="BlueRetro_DC_2A6E", age=0.0):
     from unittest.mock import MagicMock
 
     info = MagicMock()
     info.name = name
     info.rssi = rssi
+    info.time = MONOTONIC_TIME() - age
     return info
 
 
@@ -112,3 +115,51 @@ async def test_advertisement_back_triggers_refresh(hass):
         coordinator._async_seen(_adv(), None)
         await hass.async_block_till_done(wait_background_tasks=True)
     refresh.assert_awaited_once()
+
+
+LAST_INFO = "custom_components.blueretro.coordinator.bluetooth.async_last_service_info"
+
+
+async def test_presence_check_flags_in_use_on_stale_advertisement(hass):
+    """Deduplicated adverts never re-fire callbacks; the watchdog reads the age."""
+    await _setup(hass, BlueRetroState(available=True))
+    coordinator = hass.config_entries.async_entries(DOMAIN)[0].runtime_data
+    coordinator._async_seen(_adv(), None)
+
+    with patch(LAST_INFO, return_value=_adv(age=IN_USE_AFTER + 5)):
+        coordinator._async_check_presence()
+    await hass.async_block_till_done()
+    assert hass.states.get("binary_sensor.blueretro_controller_connected").state == "on"
+
+    with (
+        patch(LAST_INFO, return_value=_adv(age=1)),
+        patch.object(coordinator, "async_request_refresh", AsyncMock()) as refresh,
+    ):
+        coordinator._async_check_presence()
+        await hass.async_block_till_done(wait_background_tasks=True)
+    assert hass.states.get("binary_sensor.blueretro_controller_connected").state == "off"
+    refresh.assert_awaited_once()
+
+
+async def test_presence_check_in_use_when_dropped_from_history(hass):
+    await _setup(hass, BlueRetroState(available=True))
+    coordinator = hass.config_entries.async_entries(DOMAIN)[0].runtime_data
+    coordinator._async_seen(_adv(), None)
+    with patch(LAST_INFO, return_value=None):
+        coordinator._async_check_presence()
+    assert coordinator.in_use is True
+
+
+async def test_poll_skipped_while_in_use(hass):
+    await _setup(hass, BlueRetroState(available=True))
+    coordinator = hass.config_entries.async_entries(DOMAIN)[0].runtime_data
+    coordinator.in_use = True
+    update = AsyncMock()
+    with patch(
+        "custom_components.blueretro.coordinator.BlueRetroDevice.async_update", update
+    ):
+        await coordinator.async_refresh()
+    update.assert_not_called()
+    state = hass.states.get("binary_sensor.blueretro_config_available")
+    assert state.state == "off"
+    assert state.attributes["reason"] == REASON_IN_USE

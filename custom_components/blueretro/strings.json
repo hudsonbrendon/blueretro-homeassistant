@@ -53,6 +53,9 @@
       },
       "rssi": {
         "name": "Signal strength"
+      },
+      "vmu_free_blocks": {
+        "name": "VMU free blocks"
       }
     },
     "binary_sensor": {
@@ -190,6 +193,68 @@
           "name": "Port",
           "description": "Output port the preset targets (0 = first)."
         }
+      }
+    },
+    "backup_memory_card": {
+      "name": "Backup memory card",
+      "description": "Download the emulated Dreamcast VMU (128 KiB) or an N64 Controller Pak bank (32 KiB) to /media/blueretro. The adapter must be idle (no controller connected). Returns the saved path.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The BlueRetro adapter."
+        },
+        "card": {
+          "name": "Card",
+          "description": "vmu (Dreamcast) or controller_pak (N64). Inferred from the adapter firmware when empty."
+        },
+        "bank": {
+          "name": "Bank",
+          "description": "Controller Pak bank 1-4 (N64 only)."
+        }
+      }
+    },
+    "restore_memory_card": {
+      "name": "Restore memory card",
+      "description": "Overwrite the emulated VMU or a Controller Pak bank with an image file. Destructive: back up first and keep the console at its menu.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The BlueRetro adapter."
+        },
+        "path": {
+          "name": "File",
+          "description": "Image to upload; must be inside an allowlisted directory such as /media."
+        },
+        "card": {
+          "name": "Card",
+          "description": "vmu (Dreamcast) or controller_pak (N64). Inferred from the adapter firmware when empty."
+        },
+        "bank": {
+          "name": "Bank",
+          "description": "Controller Pak bank 1-4 (N64 only)."
+        }
+      }
+    },
+    "format_controller_pak": {
+      "name": "Format Controller Pak",
+      "description": "Erase an N64 Controller Pak bank with a blank formatted image. Destructive.",
+      "fields": {
+        "device_id": {
+          "name": "Device",
+          "description": "The BlueRetro adapter."
+        },
+        "bank": {
+          "name": "Bank",
+          "description": "Controller Pak bank 1-4 (N64 only)."
+        }
+      }
+    }
+  },
+  "selector": {
+    "card": {
+      "options": {
+        "vmu": "Dreamcast VMU",
+        "controller_pak": "N64 Controller Pak"
       }
     }
   }

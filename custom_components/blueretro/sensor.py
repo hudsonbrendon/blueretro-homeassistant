@@ -79,12 +79,15 @@ async def async_setup_entry(
 ) -> None:
     """Set up BlueRetro sensors."""
     coordinator = entry.runtime_data
-    async_add_entities(
-        [
-            *(BlueRetroSensor(coordinator, desc) for desc in SENSORS),
-            BlueRetroRssiSensor(coordinator),
-        ]
-    )
+    entities: list[SensorEntity] = [
+        *(BlueRetroSensor(coordinator, desc) for desc in SENSORS),
+        BlueRetroRssiSensor(coordinator),
+    ]
+    # Setup never waits for a BLE read, so tell Dreamcast adapters apart by
+    # their advertised name (BlueRetro_DC_XXXX).
+    if "_DC_" in (coordinator.adv_name or coordinator.title or ""):
+        entities.append(BlueRetroVmuSensor(coordinator))
+    async_add_entities(entities)
 
 
 class BlueRetroSensor(BlueRetroEntity, SensorEntity):
@@ -131,3 +134,38 @@ class BlueRetroRssiSensor(BlueRetroEntity, SensorEntity):
     @property
     def native_value(self) -> int | None:
         return self.coordinator.rssi
+
+
+class BlueRetroVmuSensor(BlueRetroEntity, SensorEntity):
+    """Free blocks on the emulated Dreamcast VMU; the save list as attributes."""
+
+    _attr_translation_key = "vmu_free_blocks"
+    _attr_icon = "mdi:sd"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "blocks"
+
+    def __init__(self, coordinator) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{coordinator.address}_vmu_free_blocks"
+
+    @property
+    def native_value(self) -> int | None:
+        return self.coordinator.data.vmu_free_blocks if self.coordinator.data else None
+
+    @property
+    def extra_state_attributes(self) -> dict | None:
+        saves = self.coordinator.data.vmu_saves if self.coordinator.data else None
+        if saves is None:
+            return None
+        return {
+            "save_count": len(saves),
+            "saves": [
+                {
+                    "name": save.name,
+                    "kind": save.kind,
+                    "blocks": save.blocks,
+                    "saved": save.saved.isoformat() if save.saved else None,
+                }
+                for save in saves
+            ],
+        }

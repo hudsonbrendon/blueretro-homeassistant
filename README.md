@@ -29,10 +29,14 @@ automatically via `manifest.json` `requirements`.
   version, BD address, pairing mode, multitap, memory-card bank and firmware name.
 - 🟢 **Config available** — a connectivity `binary_sensor`, on while the adapter is
   idle and reachable.
-- 🎮 **Controller connected** — a passive `binary_sensor` that flips on when a
-  controller pairs and off when it disconnects, without ever connecting to the
-  adapter (the firmware only advertises while idle). Returning to idle also
-  triggers an immediate poll, so the game/config refresh right away.
+- 🎮 **Controller connected** — a passive `binary_sensor` that flips on within
+  ~45 s of a controller pairing and off when it disconnects, without ever
+  connecting to the adapter (the firmware advertises every 100 ms while idle and
+  stops while a controller is connected). Polls are skipped while it is on, and
+  returning to idle triggers an immediate poll.
+- 💾 **Dreamcast VMU** — a `VMU free blocks` sensor whose attributes list every
+  save (name, blocks, date), plus services to back up / restore the VMU and N64
+  Controller Pak banks.
 - 📶 **Signal strength** — RSSI diagnostic sensor from the advertisement
   (disabled by default).
 - 🎛️ **Selects** — Controller mode (GamePad / GamePadAlt / Keyboard / Mouse) and
@@ -114,11 +118,17 @@ Target a BlueRetro device:
 | `blueretro.set_input_mapping` | Write advanced input mappings (src/dest/dest_id/max/threshold/deadzone/turbo/scaling/diag_scaling) to a slot. |
 | `blueretro.list_presets` | List the bundled input-mapping presets (id, name, console, description); returns a response. |
 | `blueretro.apply_preset` | Write a bundled preset (e.g. `n64_fps`, `gc_rogue_leader`) to a config slot, offsetting `dest_id` by `port`. |
+| `blueretro.backup_memory_card` | Save the Dreamcast VMU (128 KiB, standard `.bin` like the web config and emulators) or an N64 Controller Pak bank (32 KiB) to `/media/blueretro/`; returns the path. The card type is inferred from the adapter. |
+| `blueretro.restore_memory_card` | Upload a VMU / Controller Pak image from an allowlisted path (e.g. `/media/blueretro/…`). Destructive. |
+| `blueretro.format_controller_pak` | Erase an N64 Controller Pak bank with a blank formatted image. Destructive. |
 
-> **Not exposed:** memory-card (VMU) and N64 Controller Pak backup/restore and
-> OTA firmware install are implemented in `blueretro-ble` but need a high BLE MTU
-> that Home Assistant's stack doesn't negotiate. Use the official
-> [web config](https://blueretro.io) (Chrome, MTU 517) for those large transfers.
+Memory-card transfers take about a minute for a full VMU, resume after
+Bluetooth drops and work at any MTU. Run them with the adapter idle (no
+controller connected) and, for restores, the console at its menu. The services
+wait for the adapter's flash write before returning.
+
+> **Not exposed:** OTA firmware install (implemented in `blueretro-ble`). Use the
+> official [web config](https://blueretro.io) for it.
 
 ## How it works
 

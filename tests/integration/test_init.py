@@ -1,6 +1,7 @@
 from unittest.mock import AsyncMock, patch
 
 from homeassistant.config_entries import ConfigEntryState
+from homeassistant.components.bluetooth import MONOTONIC_TIME
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from blueretro_ble import BlueRetroState
@@ -42,6 +43,7 @@ async def test_device_named_from_advertisement(hass):
     info = MagicMock()
     info.name = "BlueRetro_DC_2A6E"
     info.rssi = -50
+    info.time = MONOTONIC_TIME()
     with (
         patch(
             "custom_components.blueretro.coordinator.bluetooth.async_last_service_info",
@@ -85,7 +87,7 @@ async def test_device_renamed_on_first_advertisement(hass):
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done(wait_background_tasks=True)
-    info = MagicMock(); info.name = "BlueRetro_GC_106E"; info.rssi = -40
+    info = MagicMock(); info.name = "BlueRetro_GC_106E"; info.rssi = -40; info.time = MONOTONIC_TIME()
     entry.runtime_data._async_seen(info, None)
     await hass.async_block_till_done()
     device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "AA:BB:CC:DD:EE:FF")})

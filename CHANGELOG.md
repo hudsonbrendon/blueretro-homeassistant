@@ -6,6 +6,31 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-25
+
+Built on findings from reverse engineering the v25.04 firmware (blueretro-ble 0.9.0).
+
+### Added
+- **Memory-card services:** `blueretro.backup_memory_card` (Dreamcast VMU or N64
+  Controller Pak bank → `/media/blueretro/`, standard VMU `.bin`),
+  `blueretro.restore_memory_card` and `blueretro.format_controller_pak`. Transfers
+  resume after link drops and work at any MTU; restores wait for the flash write.
+- **VMU free blocks** sensor on Dreamcast adapters, with the save list (name,
+  kind, blocks, date) as attributes.
+
+### Changed
+- **Controller connected reacts in under a minute.** It now watches the age of
+  the last advertisement (the firmware advertises every 100 ms while idle)
+  instead of relying on Home Assistant's passive-device timeout (~15 min).
+- Polls are skipped while a controller is connected, so they no longer burn a
+  proxy connection slot and up to 120 s per attempt; the `reason` attribute says
+  a controller is connected.
+- Polls and memory-card transfers no longer overlap.
+
+### Fixed
+- Stopped using `device_registry.async_get_device`, deprecated in Home
+  Assistant 2026 and removed in 2027.8.
+
 ## [0.8.2] - 2026-08-30
 
 ### Fixed
