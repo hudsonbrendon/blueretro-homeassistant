@@ -2,16 +2,20 @@ from unittest.mock import AsyncMock, patch
 
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import entity_registry as er
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from blueretro_ble import BlueRetroState
 from custom_components.blueretro.const import CONF_OUTPUT_PORTS, DOMAIN
 
 ADDR = "AA:BB:CC:DD:EE:FF"
-BLE_ADDR = "custom_components.blueretro.coordinator.bluetooth.async_ble_device_from_address"
+BLE_ADDR = (
+    "custom_components.blueretro.coordinator.bluetooth.async_ble_device_from_address"
+)
 UPDATE = "custom_components.blueretro.coordinator.BlueRetroDevice.async_update"
-SET_OUTPUT = "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_output_config"
+SET_OUTPUT = (
+    "custom_components.blueretro.coordinator.BlueRetroDevice.async_set_output_config"
+)
 
 
 async def _setup(hass, ble_device, state, options=None):
@@ -66,9 +70,7 @@ async def test_only_port_0_selects_by_default(hass):
         is not None
     )
     assert (
-        ent_reg.async_get_entity_id(
-            "select", DOMAIN, f"{ADDR}_controller_mode_port2"
-        )
+        ent_reg.async_get_entity_id("select", DOMAIN, f"{ADDR}_controller_mode_port2")
         is None
     )
 

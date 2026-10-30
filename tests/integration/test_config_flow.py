@@ -2,12 +2,12 @@ from unittest.mock import patch
 
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
+from blueretro_ble.const import SERVICE_UUID
 from homeassistant.components.bluetooth import BluetoothServiceInfoBleak
 from homeassistant.config_entries import SOURCE_BLUETOOTH
 from homeassistant.data_entry_flow import FlowResultType
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
-from blueretro_ble.const import SERVICE_UUID
 from custom_components.blueretro.const import (
     CONF_OUTPUT_PORTS,
     CONF_SCAN_INTERVAL,
@@ -50,9 +50,7 @@ async def test_bluetooth_discovery_creates_entry(hass):
     assert result["type"] is FlowResultType.FORM
     assert result["step_id"] == "bluetooth_confirm"
 
-    with patch(
-        "custom_components.blueretro.async_setup_entry", return_value=True
-    ):
+    with patch("custom_components.blueretro.async_setup_entry", return_value=True):
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"], user_input={}
         )
@@ -76,9 +74,7 @@ async def test_options_flow_sets_scan_interval(hass):
     entry.add_to_hass(hass)
     # Patch the integration setup so the options flow can be exercised without
     # bringing up the BLE coordinator.
-    with patch(
-        "custom_components.blueretro.async_setup_entry", return_value=True
-    ):
+    with patch("custom_components.blueretro.async_setup_entry", return_value=True):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done()
 

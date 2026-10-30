@@ -11,13 +11,15 @@ from homeassistant.components.button import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from blueretro_ble import BlueRetroDevice
 
 from . import BlueRetroConfigEntry
 from .coordinator import BlueRetroCoordinator
 from .entity import BlueRetroEntity
+
+PARALLEL_UPDATES = 1
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -50,7 +52,7 @@ BUTTONS: tuple[BlueRetroButtonDescription, ...] = (
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: BlueRetroConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up BlueRetro buttons."""
     coordinator = entry.runtime_data
@@ -83,6 +85,4 @@ class BlueRetroButton(BlueRetroEntity, ButtonEntity):
             raise HomeAssistantError(
                 "BlueRetro is busy or out of range (only reachable when idle)"
             )
-        await self.entity_description.press_fn(
-            self.coordinator.device, ble_device
-        )
+        await self.entity_description.press_fn(self.coordinator.device, ble_device)

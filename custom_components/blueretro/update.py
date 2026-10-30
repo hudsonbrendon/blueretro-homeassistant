@@ -8,14 +8,14 @@ at the release page.
 
 from __future__ import annotations
 
+from datetime import timedelta
 import logging
 import re
-from datetime import timedelta
 
 from homeassistant.components.update import UpdateEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.util import Throttle
 
 from blueretro_ble import parse_firmware
@@ -23,6 +23,8 @@ from blueretro_ble import parse_firmware
 from . import BlueRetroConfigEntry
 from .coordinator import BlueRetroCoordinator
 from .entity import BlueRetroEntity
+
+PARALLEL_UPDATES = 1
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,7 +50,7 @@ def _semver(raw: str | None) -> str | None:
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: BlueRetroConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the BlueRetro firmware update entity."""
     async_add_entities([BlueRetroFirmwareUpdate(entry.runtime_data)])
@@ -93,12 +95,10 @@ class BlueRetroFirmwareUpdate(BlueRetroEntity, UpdateEntity):
         try:
             async with session.get(GITHUB_LATEST_RELEASE) as resp:
                 if resp.status != 200:
-                    _LOGGER.debug(
-                        "GitHub release check returned HTTP %s", resp.status
-                    )
+                    _LOGGER.debug("GitHub release check returned HTTP %s", resp.status)
                     return
                 payload = await resp.json()
-        except Exception as err:  # noqa: BLE001 - best-effort network check
+        except Exception as err:
             _LOGGER.debug("GitHub release check failed: %s", err)
             return
         self._latest_version = _semver(payload.get("tag_name"))

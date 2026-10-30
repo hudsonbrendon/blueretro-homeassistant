@@ -43,20 +43,11 @@ async def test_sensors_report_values(hass):
 
     assert hass.states.get("sensor.blueretro_firmware").state == "v1.8.1"
     assert hass.states.get("sensor.blueretro_game_id").state == "GALE01"
-    assert (
-        hass.states.get("sensor.blueretro_game").state
-        == "Super Smash Bros. Melee"
-    )
+    assert hass.states.get("sensor.blueretro_game").state == "Super Smash Bros. Melee"
     assert hass.states.get("sensor.blueretro_config_source").state == "1"
     assert hass.states.get("sensor.blueretro_abi_version").state == "2"
-    assert (
-        hass.states.get("sensor.blueretro_bd_address").state
-        == "66:55:44:33:22:11"
-    )
-    assert (
-        hass.states.get("sensor.blueretro_firmware_name").state
-        == "playstation hw1"
-    )
+    assert hass.states.get("sensor.blueretro_bd_address").state == "66:55:44:33:22:11"
+    assert hass.states.get("sensor.blueretro_firmware_name").state == "playstation hw1"
 
 
 async def test_sensors_unavailable_when_offline(hass):

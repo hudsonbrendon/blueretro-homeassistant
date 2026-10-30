@@ -1,0 +1,15 @@
+pytest-homeassistant-custom-component==0.13.375
+ruff
+blueretro-ble==0.7.0
+# Bluetooth stack extras the HA test harness needs on macOS
+aiousbwatcher
+habluetooth
+bluetooth-adapters
+bluetooth-data-tools
+bleak
+bleak-retry-connector
+dbus-fast
+pyserial
+serialx
+bluetooth-auto-recovery
+pyudev; sys_platform == "linux"

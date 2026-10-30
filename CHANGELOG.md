@@ -6,6 +6,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-10-30
+
+### Changed
+- Modernized for Home Assistant 2026.10 / Python 3.14: options flow now uses
+  `OptionsFlowWithReload` (no manual update listener), services are registered
+  from `async_setup`, platforms declare `PARALLEL_UPDATES` and use
+  `AddConfigEntryEntitiesCallback`, `BluetoothServiceInfoBleak` is imported from
+  `homeassistant.helpers.service_info.bluetooth`, and the coordinator is bound
+  to its config entry explicitly.
+- Added `diagnostics.py` (redacts addresses) and `quality_scale.yaml`.
+- `manifest.json`: added `loggers`.
+- Tooling: `requirements_test.txt` (pytest-homeassistant-custom-component
+  0.13.375), ruff config in `pyproject.toml`, CI on Python 3.14, HACS minimum
+  Home Assistant 2025.8.0.
+
 ## [0.7.1] - 2026-05-29
 
 ### Fixed

@@ -12,7 +12,7 @@ from homeassistant.config_entries import (
     ConfigEntry,
     ConfigFlow,
     ConfigFlowResult,
-    OptionsFlow,
+    OptionsFlowWithReload,
 )
 from homeassistant.core import callback
 import voluptuous as vol
@@ -64,9 +64,7 @@ class BlueRetroConfigFlow(ConfigFlow, domain=DOMAIN):
         """Confirm adding a discovered device."""
         assert self._discovery is not None
         if user_input is not None:
-            return self.async_create_entry(
-                title=self._discovery.name, data={}
-            )
+            return self.async_create_entry(title=self._discovery.name, data={})
         self._set_confirm_only()
         return self.async_show_form(
             step_id="bluetooth_confirm",
@@ -106,7 +104,7 @@ class BlueRetroConfigFlow(ConfigFlow, domain=DOMAIN):
         )
 
 
-class BlueRetroOptionsFlow(OptionsFlow):
+class BlueRetroOptionsFlow(OptionsFlowWithReload):
     """Tune the poll interval and how many output ports are exposed."""
 
     async def async_step_init(
@@ -135,9 +133,7 @@ class BlueRetroOptionsFlow(OptionsFlow):
                     ),
                     vol.Required(
                         CONF_OUTPUT_PORTS,
-                        default=opts.get(
-                            CONF_OUTPUT_PORTS, DEFAULT_OUTPUT_PORTS
-                        ),
+                        default=opts.get(CONF_OUTPUT_PORTS, DEFAULT_OUTPUT_PORTS),
                     ): vol.All(
                         vol.Coerce(int),
                         vol.Range(min=1, max=MAX_OUTPUT_PORTS),

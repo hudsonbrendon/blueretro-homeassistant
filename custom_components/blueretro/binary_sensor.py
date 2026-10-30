@@ -7,16 +7,19 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from . import BlueRetroConfigEntry
+from .coordinator import BlueRetroCoordinator
 from .entity import BlueRetroEntity
+
+PARALLEL_UPDATES = 0
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: BlueRetroConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up the BlueRetro connectivity binary sensor."""
     async_add_entities([BlueRetroConfigAvailable(entry.runtime_data)])
@@ -28,7 +31,7 @@ class BlueRetroConfigAvailable(BlueRetroEntity, BinarySensorEntity):
     _attr_translation_key = "config_available"
     _attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
 
-    def __init__(self, coordinator) -> None:
+    def __init__(self, coordinator: BlueRetroCoordinator) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{coordinator.address}_config_available"
 

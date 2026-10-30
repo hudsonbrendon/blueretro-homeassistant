@@ -1,13 +1,15 @@
 from unittest.mock import AsyncMock, patch
 
 from homeassistant.exceptions import HomeAssistantError
-from pytest_homeassistant_custom_component.common import MockConfigEntry
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from blueretro_ble import BlueRetroState
 from custom_components.blueretro.const import DOMAIN
 
-BLE_ADDR = "custom_components.blueretro.coordinator.bluetooth.async_ble_device_from_address"
+BLE_ADDR = (
+    "custom_components.blueretro.coordinator.bluetooth.async_ble_device_from_address"
+)
 UPDATE = "custom_components.blueretro.coordinator.BlueRetroDevice.async_update"
 
 

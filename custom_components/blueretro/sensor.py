@@ -11,12 +11,15 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from blueretro_ble import BlueRetroState
 
 from . import BlueRetroConfigEntry
+from .coordinator import BlueRetroCoordinator
 from .entity import BlueRetroEntity
+
+PARALLEL_UPDATES = 0
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -71,13 +74,11 @@ SENSORS: tuple[BlueRetroSensorDescription, ...] = (
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: BlueRetroConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up BlueRetro sensors."""
     coordinator = entry.runtime_data
-    async_add_entities(
-        BlueRetroSensor(coordinator, desc) for desc in SENSORS
-    )
+    async_add_entities(BlueRetroSensor(coordinator, desc) for desc in SENSORS)
 
 
 class BlueRetroSensor(BlueRetroEntity, SensorEntity):
@@ -85,7 +86,9 @@ class BlueRetroSensor(BlueRetroEntity, SensorEntity):
 
     entity_description: BlueRetroSensorDescription
 
-    def __init__(self, coordinator, description: BlueRetroSensorDescription) -> None:
+    def __init__(
+        self, coordinator: BlueRetroCoordinator, description: BlueRetroSensorDescription
+    ) -> None:
         super().__init__(coordinator)
         self.entity_description = description
         self._attr_unique_id = f"{coordinator.address}_{description.key}"

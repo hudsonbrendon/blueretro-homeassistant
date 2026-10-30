@@ -34,13 +34,13 @@ def mock_usb_setup():
     """Skip starting the usb pyudev monitor.
 
     ``bluetooth`` depends on ``usb``, whose pyudev monitor cannot start inside CI
-    containers (no udev) and raises in ``_get_monitor_observer``. On macOS the
+    containers (no udev) and raises in ``_async_start_aiousbwatcher``. On macOS the
     monitor is a no-op so tests pass locally, but on Linux CI it fails and drags
     down the bluetooth -> bluetooth_adapters -> blueretro chain. Stub only the
     monitor start so usb setup still registers its data (which bluetooth reads).
     """
     with patch(
-        "homeassistant.components.usb.USBDiscovery._async_start_monitor",
+        "homeassistant.components.usb.USBDiscovery._async_start_aiousbwatcher",
         AsyncMock(return_value=None),
     ):
         yield

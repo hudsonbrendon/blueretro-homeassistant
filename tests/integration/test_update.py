@@ -6,7 +6,9 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from blueretro_ble import BlueRetroState
 from custom_components.blueretro.const import DOMAIN
 
-BLE_ADDR = "custom_components.blueretro.coordinator.bluetooth.async_ble_device_from_address"
+BLE_ADDR = (
+    "custom_components.blueretro.coordinator.bluetooth.async_ble_device_from_address"
+)
 UPDATE = "custom_components.blueretro.coordinator.BlueRetroDevice.async_update"
 SESSION = "custom_components.blueretro.update.async_get_clientsession"
 ENTITY = "update.blueretro_firmware"
@@ -28,9 +30,7 @@ def _github_session(tag: str = "v9.9.9", status: int = 200) -> MagicMock:
 
 
 async def _setup(hass, fw_version: str) -> MockConfigEntry:
-    entry = MockConfigEntry(
-        domain=DOMAIN, unique_id="AA:BB:CC:DD:EE:FF", data={}
-    )
+    entry = MockConfigEntry(domain=DOMAIN, unique_id="AA:BB:CC:DD:EE:FF", data={})
     entry.add_to_hass(hass)
     state = BlueRetroState(available=True, fw_version=fw_version)
     with (

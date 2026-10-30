@@ -25,6 +25,8 @@ from blueretro_ble import InputMapping
 from .const import DOMAIN
 
 if TYPE_CHECKING:
+    from bleak.backends.device import BLEDevice
+
     from .coordinator import BlueRetroCoordinator
 
 SERVICE_LIST_FILES = "list_config_files"
@@ -67,7 +69,7 @@ def _coordinator(hass: HomeAssistant, call: ServiceCall) -> BlueRetroCoordinator
     raise HomeAssistantError(f"{device_id} is not a BlueRetro device")
 
 
-def _ble(coordinator: BlueRetroCoordinator):
+def _ble(coordinator: BlueRetroCoordinator) -> BLEDevice:
     ble_device = coordinator.ble_device()
     if ble_device is None:
         raise HomeAssistantError(
@@ -136,9 +138,7 @@ def async_setup_services(hass: HomeAssistant) -> None:
             {
                 **_DEVICE,
                 vol.Required(ATTR_CONFIG_ID): vol.All(int, vol.Range(min=0)),
-                vol.Required(ATTR_MAPPINGS): vol.All(
-                    cv.ensure_list, [_MAPPING_SCHEMA]
-                ),
+                vol.Required(ATTR_MAPPINGS): vol.All(cv.ensure_list, [_MAPPING_SCHEMA]),
             }
         ),
     )

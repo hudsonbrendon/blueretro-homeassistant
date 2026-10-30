@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import timedelta
+import logging
+from typing import TYPE_CHECKING
 
 from homeassistant.components import bluetooth
 from homeassistant.config_entries import ConfigEntry
@@ -20,6 +21,9 @@ from .const import (
     DOMAIN,
 )
 
+if TYPE_CHECKING:
+    from bleak.backends.device import BLEDevice
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -27,13 +31,12 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
     """Polls a BlueRetro adapter while it is idle/connectable."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
-        minutes = entry.options.get(
-            CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES
-        )
+        minutes = entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES)
         super().__init__(
             hass,
             _LOGGER,
             name=DOMAIN,
+            config_entry=entry,
             update_interval=timedelta(minutes=minutes),
         )
         self.address: str = entry.unique_id
@@ -74,7 +77,7 @@ class BlueRetroCoordinator(DataUpdateCoordinator[BlueRetroState]):
             _LOGGER.debug("BlueRetro %s unavailable: %s", self.address, self.last_error)
         return state
 
-    def ble_device(self):
+    def ble_device(self) -> BLEDevice | None:
         """Return the current connectable BLEDevice or None."""
         return bluetooth.async_ble_device_from_address(
             self.hass, self.address, connectable=True

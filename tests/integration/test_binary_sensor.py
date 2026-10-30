@@ -25,16 +25,12 @@ async def _setup(hass, state):
 
 async def test_config_available_on_when_idle(hass):
     await _setup(hass, BlueRetroState(available=True))
-    assert (
-        hass.states.get("binary_sensor.blueretro_config_available").state == "on"
-    )
+    assert hass.states.get("binary_sensor.blueretro_config_available").state == "on"
 
 
 async def test_config_available_off_when_busy(hass):
     await _setup(hass, BlueRetroState(available=False))
-    assert (
-        hass.states.get("binary_sensor.blueretro_config_available").state == "off"
-    )
+    assert hass.states.get("binary_sensor.blueretro_config_available").state == "off"
 
 
 async def test_reason_none_when_available(hass):

@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
 from blueretro_ble import (
     ACCESSORY_CFG,
@@ -23,6 +23,8 @@ from blueretro_ble import (
 from . import BlueRetroConfigEntry
 from .coordinator import BlueRetroCoordinator
 from .entity import BlueRetroEntity
+
+PARALLEL_UPDATES = 1
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -54,31 +56,27 @@ def _output_selects(ports: int) -> list[BlueRetroSelectDescription]:
                 placeholders=placeholders,
                 options=list(DEVICE_CFG),
                 current_fn=lambda s, p=port: _port_value(s, p)[0],
-                set_fn=lambda device, ble, opt, p=port: (
-                    device.async_set_output_config(ble, p, device=opt)
+                set_fn=lambda device, ble, opt, p=port: device.async_set_output_config(
+                    ble, p, device=opt
                 ),
             )
         )
         descs.append(
             BlueRetroSelectDescription(
                 key=f"accessory{suffix}",
-                translation_key=(
-                    "accessory" if port == 0 else "accessory_port"
-                ),
+                translation_key=("accessory" if port == 0 else "accessory_port"),
                 placeholders=placeholders,
                 options=list(ACCESSORY_CFG),
                 current_fn=lambda s, p=port: _port_value(s, p)[1],
-                set_fn=lambda device, ble, opt, p=port: (
-                    device.async_set_output_config(ble, p, accessory=opt)
+                set_fn=lambda device, ble, opt, p=port: device.async_set_output_config(
+                    ble, p, accessory=opt
                 ),
             )
         )
     return descs
 
 
-def _port_value(
-    state: BlueRetroState, port: int
-) -> tuple[str | None, str | None]:
+def _port_value(state: BlueRetroState, port: int) -> tuple[str | None, str | None]:
     """Return ``(device, accessory)`` for a port.
 
     Prefers ``state.ports``; for port 0 falls back to the legacy
@@ -119,9 +117,7 @@ GLOBAL_SELECTS: tuple[BlueRetroSelectDescription, ...] = (
         translation_key="system",
         options=list(SYSTEM_CFG),
         current_fn=lambda s: s.system,
-        set_fn=lambda device, ble, opt: device.async_set_global_config(
-            ble, system=opt
-        ),
+        set_fn=lambda device, ble, opt: device.async_set_global_config(ble, system=opt),
     ),
     BlueRetroSelectDescription(
         key="inquiry_mode",
@@ -138,16 +134,12 @@ GLOBAL_SELECTS: tuple[BlueRetroSelectDescription, ...] = (
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: BlueRetroConfigEntry,
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Set up BlueRetro selects (per-port output config + global config)."""
     coordinator = entry.runtime_data
-    descriptions = _output_selects(coordinator.output_ports) + list(
-        GLOBAL_SELECTS
-    )
-    async_add_entities(
-        BlueRetroSelect(coordinator, desc) for desc in descriptions
-    )
+    descriptions = _output_selects(coordinator.output_ports) + list(GLOBAL_SELECTS)
+    async_add_entities(BlueRetroSelect(coordinator, desc) for desc in descriptions)
 
 
 class BlueRetroSelect(BlueRetroEntity, SelectEntity):
