@@ -60,8 +60,8 @@ async def test_device_named_from_advertisement(hass):
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done(wait_background_tasks=True)
-    device = dr.async_get(hass).async_get_device(
-        identifiers={(DOMAIN, "AA:BB:CC:DD:EE:FF")}
+    device = dr.async_get(hass).async_get_device_by_identifier(
+        (DOMAIN, "AA:BB:CC:DD:EE:FF"), entry.entry_id
     )
     assert device.name == "BlueRetro_DC_2A6E"
     assert hass.states.get("sensor.blueretro_dc_2a6e_signal_strength") is None  # disabled by default
@@ -90,7 +90,9 @@ async def test_device_renamed_on_first_advertisement(hass):
     info = MagicMock(); info.name = "BlueRetro_GC_106E"; info.rssi = -40; info.time = MONOTONIC_TIME()
     entry.runtime_data._async_seen(info, None)
     await hass.async_block_till_done()
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, "AA:BB:CC:DD:EE:FF")})
+    device = dr.async_get(hass).async_get_device_by_identifier(
+        (DOMAIN, "AA:BB:CC:DD:EE:FF"), entry.entry_id
+    )
     assert device.name == "BlueRetro_GC_106E"
 
 
@@ -113,8 +115,8 @@ async def test_device_named_from_entry_title_when_not_advertising(hass):
     ):
         assert await hass.config_entries.async_setup(entry.entry_id)
         await hass.async_block_till_done(wait_background_tasks=True)
-    device = dr.async_get(hass).async_get_device(
-        identifiers={(DOMAIN, "AA:BB:CC:DD:EE:FF")}
+    device = dr.async_get(hass).async_get_device_by_identifier(
+        (DOMAIN, "AA:BB:CC:DD:EE:FF"), entry.entry_id
     )
     assert device.name == "BlueRetro_N64_8756"
 

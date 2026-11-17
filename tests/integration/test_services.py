@@ -34,7 +34,10 @@ async def _setup(hass):
 
 
 def _device_id(hass) -> str:
-    device = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, ADDR)})
+    entry = hass.config_entries.async_entries(DOMAIN)[0]
+    device = dr.async_get(hass).async_get_device_by_identifier(
+        (DOMAIN, ADDR), entry.entry_id
+    )
     assert device is not None
     return device.id
 
