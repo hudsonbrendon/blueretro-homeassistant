@@ -12,13 +12,12 @@ import logging
 import re
 from datetime import timedelta
 
+from blueretro_ble import parse_firmware
 from homeassistant.components.update import UpdateEntity
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import Throttle
-
-from blueretro_ble import parse_firmware
 
 from . import BlueRetroConfigEntry
 from .coordinator import BlueRetroCoordinator

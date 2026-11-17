@@ -1,20 +1,10 @@
-name: Feature request
-description: Suggest an improvement for the BlueRetro integration
-labels: ["enhancement"]
+name: Request a feature
+description: Idea for a new sensor, action or feature.
+labels: [enhancement]
 body:
   - type: textarea
-    id: problem
+    id: idea
     attributes:
-      label: What problem does this solve?
+      label: What would you like?
     validations:
       required: true
-  - type: textarea
-    id: proposal
-    attributes:
-      label: Proposed solution
-    validations:
-      required: true
-  - type: textarea
-    id: context
-    attributes:
-      label: Additional context

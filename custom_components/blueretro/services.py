@@ -8,21 +8,12 @@ still not exposed here.
 from __future__ import annotations
 
 import asyncio
+import time
 from dataclasses import asdict
 from pathlib import Path
-import time
 from typing import TYPE_CHECKING
 
-from homeassistant.core import (
-    HomeAssistant,
-    ServiceCall,
-    ServiceResponse,
-    SupportsResponse,
-)
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers import config_validation as cv, device_registry as dr
 import voluptuous as vol
-
 from blueretro_ble import (
     PAK_SIZE,
     VMU_SIZE,
@@ -31,6 +22,15 @@ from blueretro_ble import (
     load_preset,
     parse_firmware,
 )
+from homeassistant.core import (
+    HomeAssistant,
+    ServiceCall,
+    ServiceResponse,
+    SupportsResponse,
+)
+from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
 
 from .const import DOMAIN
 

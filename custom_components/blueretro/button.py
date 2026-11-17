@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 
+from blueretro_ble import BlueRetroDevice
 from homeassistant.components.button import (
     ButtonEntity,
     ButtonEntityDescription,
@@ -12,8 +13,6 @@ from homeassistant.components.button import (
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
-from blueretro_ble import BlueRetroDevice
 
 from . import BlueRetroConfigEntry
 from .coordinator import BlueRetroCoordinator

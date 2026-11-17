@@ -5,11 +5,6 @@ from __future__ import annotations
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 
-from homeassistant.components.select import SelectEntity, SelectEntityDescription
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
 from blueretro_ble import (
     ACCESSORY_CFG,
     CFG_SRC,
@@ -20,6 +15,10 @@ from blueretro_ble import (
     BlueRetroDevice,
     BlueRetroState,
 )
+from homeassistant.components.select import SelectEntity, SelectEntityDescription
+from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import BlueRetroConfigEntry
 from .coordinator import BlueRetroCoordinator

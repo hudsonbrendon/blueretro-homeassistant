@@ -6,6 +6,7 @@ import asyncio
 import logging
 from datetime import datetime, timedelta
 
+from blueretro_ble import BlueRetroDevice, BlueRetroState, parse_firmware
 from homeassistant.components import bluetooth
 from homeassistant.components.bluetooth import (
     MONOTONIC_TIME,
@@ -19,8 +20,6 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import dt as dt_util
-
-from blueretro_ble import BlueRetroDevice, BlueRetroState, parse_firmware
 
 from .const import (
     CONF_OUTPUT_PORTS,

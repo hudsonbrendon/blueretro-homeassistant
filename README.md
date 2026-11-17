@@ -1,14 +1,17 @@
 <p align="center">
-  <img src="custom_components/blueretro/brand/logo.png" alt="BlueRetro" width="420">
+  <img src="custom_components/blueretro/brand/logo@2x.png" alt="BlueRetro" height="128">
 </p>
 
 # BlueRetro for Home Assistant
 
-[![Tests](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/test.yml/badge.svg)](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/test.yml)
-[![Validate](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/validate.yml/badge.svg)](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/validate.yml)
+[![Tests](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/tests.yml/badge.svg)](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/tests.yml)
+[![Hassfest](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/hassfest.yml/badge.svg)](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/hassfest.yml)
+[![HACS](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/validate.yml/badge.svg)](https://github.com/hudsonbrendon/blueretro-homeassistant/actions/workflows/validate.yml)
+[![Release](https://img.shields.io/github/v/release/hudsonbrendon/blueretro-homeassistant?sort=semver)](https://github.com/hudsonbrendon/blueretro-homeassistant/releases)
+[![Downloads](https://img.shields.io/github/downloads/hudsonbrendon/blueretro-homeassistant/total)](https://github.com/hudsonbrendon/blueretro-homeassistant/releases)
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/)
-[![Release](https://img.shields.io/github/v/release/hudsonbrendon/blueretro-homeassistant)](https://github.com/hudsonbrendon/blueretro-homeassistant/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2024.12.0%2B-18BCF2?logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
+[![License](https://img.shields.io/github/license/hudsonbrendon/blueretro-homeassistant)](LICENSE)
 
 Auto-discovers a **[BlueRetro](https://github.com/darthcloud/BlueRetro)**
 retro-console Bluetooth adapter over Bluetooth and exposes its status, current
@@ -66,6 +69,9 @@ automatically via `manifest.json` `requirements`.
   interface is only reachable then).
 
 ## Installation
+
+[![Open in HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=hudsonbrendon&repository=blueretro-homeassistant&category=integration)
+[![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=blueretro)
 
 ### HACS (recommended)
 

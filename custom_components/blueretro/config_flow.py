@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import voluptuous as vol
+from blueretro_ble import supports
 from homeassistant.components.bluetooth import (
     BluetoothServiceInfoBleak,
     async_discovered_service_info,
@@ -15,9 +17,6 @@ from homeassistant.config_entries import (
     OptionsFlow,
 )
 from homeassistant.core import callback
-import voluptuous as vol
-
-from blueretro_ble import supports
 
 from .const import (
     CONF_OUTPUT_PORTS,

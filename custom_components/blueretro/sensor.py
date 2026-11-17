@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from blueretro_ble import SYSTEM_CFG, BlueRetroState
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -14,8 +15,6 @@ from homeassistant.components.sensor import (
 from homeassistant.const import SIGNAL_STRENGTH_DECIBELS_MILLIWATT, EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
-from blueretro_ble import SYSTEM_CFG, BlueRetroState
 
 from . import BlueRetroConfigEntry
 from .entity import BlueRetroEntity
